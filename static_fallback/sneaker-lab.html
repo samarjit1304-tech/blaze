@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAZE | Sneaker Lab 3D</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Three.js and OrbitControls CDN Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+  <div id="navbar-container"></div>
+
+  <main class="py-24" style="max-w:1440px; margin:0 auto; padding-top:120px;">
+    
+    <div class="lab-container">
+      
+      <!-- Left: 3D Viewport (8 cols) -->
+      <div style="display:flex; flex-direction:column; gap:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="display:flex; align-items:center; gap:8px; color:var(--blaze-orange); font-size:10px; font-weight:900; letter-spacing:0.2em; text-transform:uppercase;">
+              <i data-lucide="flame"></i> BLAZE EXPERIMENTAL LAB
+            </div>
+            <h1 style="font-size:32px; margin-top:4px;">SNEAKER LAB</h1>
+          </div>
+          
+          <div style="display:flex; gap:12px;">
+            <button onclick="resetShoe()" class="btn-secondary" style="padding:10px 16px; font-size:10px; display:flex; gap:6px;"><i data-lucide="rotate-ccw" style="width:14px; height:14px;"></i> RESET</button>
+            <button onclick="document.getElementById('ar-modal').style.display='flex'" class="btn-primary" style="padding:10px 16px; font-size:10px; box-shadow:none; display:flex; gap:6px;"><i data-lucide="monitor" style="width:14px; height:14px;"></i> AR TRY-ON</button>
+          </div>
+        </div>
+
+        <!-- 3D Canvas Box -->
+        <div class="canvas-box" id="threejs-canvas-container">
+          <!-- Injected via JavaScript WebGL -->
+          <div style="position:absolute; bottom:16px; left:0; right:0; text-align:center; pointer-events:none; font-size:9px; font-weight:700; color:rgba(255,255,255,0.3); letter-spacing:0.2em;">DRAG TO ROTATE / SCROLL TO ZOOM</div>
+        </div>
+
+        <!-- Hotspot descriptions cards -->
+        <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:16px;">
+          <div class="glass-panel" style="padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+            <p style="font-size:8px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.1em; text-transform:uppercase;">CARBON SPEEDPLATE</p>
+            <p style="font-size:11px; font-weight:700; color:white; margin-top:2px;">STIFF EXPLOSIVE STRIDE</p>
+          </div>
+          <div class="glass-panel" style="padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+            <p style="font-size:8px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.1em; text-transform:uppercase;">BLAZEFOAM™ CUSHION</p>
+            <p style="font-size:11px; font-weight:700; color:white; margin-top:2px;">88.4% ENERGY RETURN</p>
+          </div>
+          <div class="glass-panel" style="padding:16px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
+            <p style="font-size:8px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.1em; text-transform:uppercase;">AEROKNIT™ DENSITY</p>
+            <p style="font-size:11px; font-weight:700; color:white; margin-top:2px;">BREATHABLE RECYCLED MESH</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Customizer Control Panel (4 cols) -->
+      <div class="glass-panel" style="padding:40px; border-radius:32px; border:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; justify-content:space-between; gap:32px;">
+        
+        <div style="display:flex; flex-direction:column; gap:24px;">
+          <div>
+            <h3 style="font-size:16px; letter-spacing:0.1em;">LAB CONTROLS</h3>
+            <p style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:4px;">Customize structural color maps in real-time.</p>
+          </div>
+
+          <!-- Presets -->
+          <div>
+            <span style="font-size:9px; font-weight:900; color:rgba(255,255,255,0.4); letter-spacing:0.1em; text-transform:uppercase;">DESIGN PRESETS</span>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px; margin-top:8px;">
+              <button onclick="loadPreset('blaze')" class="btn-secondary" style="padding:10px 0; font-size:9px;">BLAZE CLASSIC</button>
+              <button onclick="loadPreset('cyber')" class="btn-secondary" style="padding:10px 0; font-size:9px;">CYBER STEALTH</button>
+              <button onclick="loadPreset('volt')" class="btn-secondary" style="padding:10px 0; font-size:9px;">VOLT SPEED</button>
+              <button onclick="loadPreset('lava')" class="btn-secondary" style="padding:10px 0; font-size:9px;">LAVA STORM</button>
+            </div>
+          </div>
+
+          <!-- Tabs -->
+          <div>
+            <span style="font-size:9px; font-weight:900; color:rgba(255,255,255,0.4); letter-spacing:0.1em; text-transform:uppercase;">SELECT ZONE</span>
+            <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;">
+              <button onclick="setZone('upper', this)" class="zone-btn active" style="padding:6px 12px; background:var(--blaze-orange); border:1px solid transparent; color:white; font-size:9px; font-weight:900; border-radius:50px; cursor:pointer;">UPPER</button>
+              <button onclick="setZone('sole', this)" class="zone-btn" style="padding:6px 12px; background:none; border:1px solid rgba(255,255,255,0.1); color:white; font-size:9px; font-weight:900; border-radius:50px; cursor:pointer;">SOLE</button>
+              <button onclick="setZone('laces', this)" class="zone-btn" style="padding:6px 12px; background:none; border:1px solid rgba(255,255,255,0.1); color:white; font-size:9px; font-weight:900; border-radius:50px; cursor:pointer;">LACES</button>
+              <button onclick="setZone('details', this)" class="zone-btn" style="padding:6px 12px; background:none; border:1px solid rgba(255,255,255,0.1); color:white; font-size:9px; font-weight:900; border-radius:50px; cursor:pointer;">DETAILS</button>
+              <button onclick="setZone('brand', this)" class="zone-btn" style="padding:6px 12px; background:none; border:1px solid rgba(255,255,255,0.1); color:white; font-size:9px; font-weight:900; border-radius:50px; cursor:pointer;">BRAND</button>
+            </div>
+          </div>
+
+          <!-- Color palette swatches -->
+          <div>
+            <span style="font-size:9px; font-weight:900; color:rgba(255,255,255,0.4); letter-spacing:0.1em; text-transform:uppercase;">SELECT COLOR</span>
+            <div class="swatch-group" style="margin-top:8px;">
+              <!-- Swatches injected via JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Purchase calculations -->
+        <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:24px; display:flex; flex-direction:column; gap:16px;">
+          <!-- Drop Alert -->
+          <div style="background:rgba(255,90,31,0.05); border:1px solid rgba(255,90,31,0.2); padding:16px; border-radius:16px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <p style="font-size:8px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.1em; text-transform:uppercase;">LIMITED RELEASE DROP</p>
+              <p style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.8); margin-top:2px;">CARBON V2 LAUNCH IN:</p>
+            </div>
+            <div id="drop-timer" style="font-size:13px; font-weight:900; color:var(--blaze-orange); font-family:var(--font-display);">04h : 12m : 45s</div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <span style="font-size:9px; font-weight:900; color:rgba(255,255,255,0.4); letter-spacing:0.1em;">ESTIMATED PRICE</span>
+              <p style="font-size:20px; font-weight:900; color:white; margin-top:2px;">$220.00</p>
+            </div>
+            <span style="font-size:9px; font-weight:900; color:#059669; letter-spacing:0.05em; text-transform:uppercase;">FREE STAGE SHIPPING</span>
+          </div>
+
+          <button onclick="addCustomShoeToCart()" class="btn-primary w-full" style="padding:16px 0; border-radius:12px;"><i data-lucide="shopping-bag" style="width:14px; height:14px; margin-right:8px;"></i> ADD TO BAG</button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <!-- AR Modal -->
+  <div id="ar-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:2000; align-items:center; justify-content:center; padding:24px;">
+    <div class="glass-panel" style="max-width:400px; width:100%; padding:40px; border-radius:24px; display:flex; flex-direction:column; align-items:center; text-align:center; gap:24px;">
+      <div style="width:50px; height:50px; border-radius:50px; background:rgba(255,90,31,0.1); border:1px solid rgba(255,90,31,0.3); display:flex; align-items:center; justify-content:center; color:var(--blaze-orange);">
+        <i data-lucide="flame" class="animate-bounce"></i>
+      </div>
+      <h3 style="font-size:18px;">BLAZE AR TRY-ON READY</h3>
+      <p style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.6;">Scan the holographic code below with your mobile camera to view this bespoke sneaker on your feet in real-time augmented reality.</p>
+      
+      <!-- QR placeholder -->
+      <div style="padding:12px; background:white; border-radius:16px; border:2px solid var(--blaze-orange);">
+        <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&q=80&w=300" style="width:160px; height:160px; object-fit:cover;" />
+      </div>
+
+      <button onclick="document.getElementById('ar-modal').style.display='none';" class="btn-secondary w-full" style="padding:10px 0;">CLOSE SCANNER</button>
+    </div>
+  </div>
+
+  <script src="products-db.js"></script>
+  <script src="app.js"></script>
+
+  <!-- Three.js Setup Script -->
+  <script>
+    // Custom Colors State
+    let shoeColors = {
+      upper: '#000000',
+      sole: '#FF5A1F',
+      laces: '#FFFFFF',
+      details: '#FF2E2E',
+      brand: '#FF5A1F'
+    };
+
+    let activeZone = 'upper';
+    
+    // Three.js instances
+    let scene, camera, renderer, controls;
+    let shoeGroup;
+    let upperMesh, soleMesh, lacesGroup, detailsMesh, brandMesh1, brandMesh2;
+
+    function renderPageUI() {
+      // 1. Build Color Swatches UI
+      const colors = [
+        { name: 'Core Black', value: '#000000' },
+        { name: 'Blaze Orange', value: '#FF5A1F' },
+        { name: 'Electric Red', value: '#FF2E2E' },
+        { name: 'Stealth Gray', value: '#333333' },
+        { name: 'Pure White', value: '#FFFFFF' },
+        { name: 'Volt Green', value: '#39FF14' },
+        { name: 'Neon Blue', value: '#00F0FF' },
+        { name: 'Deep Purple', value: '#8A2BE2' }
+      ];
+
+      const swatchBox = document.querySelector('.swatch-group');
+      if (swatchBox) {
+        swatchBox.innerHTML = colors.map(c => `
+          <button onclick="selectColor('${c.value}')" class="swatch" style="background-color:${c.value}" title="${c.name}"></button>
+        `).join('');
+      }
+
+      selectColor(shoeColors[activeZone]); // Sets initial swatch border
+
+      // 2. Initialize Three.js WebGL Canvas
+      initThreeJS();
+
+      // 3. Launch Countdown Timer
+      startCountdown();
+
+      lucide.createIcons();
+    }
+
+    function initThreeJS() {
+      const container = document.getElementById('threejs-canvas-container');
+      if(!container) return;
+
+      // Scene
+      scene = new THREE.Scene();
+
+      // Camera
+      camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+      camera.position.set(2.8, 0.8, 3);
+
+      // Renderer
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(container.clientWidth, container.clientHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.shadowMap.enabled = true;
+      container.appendChild(renderer.domElement);
+
+      // Controls
+      controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 1.8;
+      controls.maxDistance = 4.2;
+      controls.enablePan = false;
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
+      dirLight.position.set(5, 8, 5);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
+
+      const pointLight = new THREE.PointLight(0xffffff, 0.5, 50);
+      pointLight.position.set(-5, 3, -5);
+      scene.add(pointLight);
+
+      // Create Shoe Group
+      shoeGroup = new THREE.Group();
+      shoeGroup.position.set(0, -0.2, 0);
+      scene.add(shoeGroup);
+
+      // Materials Setup
+      const upperMat = new THREE.MeshStandardMaterial({ color: shoeColors.upper, roughness: 0.8 });
+      const soleMat = new THREE.MeshStandardMaterial({ color: shoeColors.sole, roughness: 0.6, metalness: 0.2 });
+      const lacesMat = new THREE.MeshStandardMaterial({ color: shoeColors.laces, roughness: 0.5 });
+      const detailsMat = new THREE.MeshStandardMaterial({ color: shoeColors.details, roughness: 0.4, metalness: 0.7 });
+      const brandMat = new THREE.MeshStandardMaterial({ 
+        color: shoeColors.brand, 
+        emissive: shoeColors.brand, 
+        emissiveIntensity: 0.25, 
+        roughness: 0.2, 
+        metalness: 0.9 
+      });
+
+      // Geometries setup (Procedural shoe shape representation)
+      // Sole
+      const soleGeo = new THREE.BoxGeometry(2.5, 0.25, 0.8);
+      soleMesh = new THREE.Mesh(soleGeo, soleMat);
+      soleMesh.position.set(0.1, -0.4, 0);
+      soleMesh.castShadow = true;
+      soleMesh.receiveShadow = true;
+      shoeGroup.add(soleMesh);
+
+      // Upper
+      const upperGeo = new THREE.BoxGeometry(2.1, 0.6, 0.76);
+      upperMesh = new THREE.Mesh(upperGeo, upperMat);
+      upperMesh.position.set(0, 0, 0);
+      upperMesh.castShadow = true;
+      upperMesh.receiveShadow = true;
+      shoeGroup.add(upperMesh);
+
+      // Collar (Ankle)
+      const collarGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.5, 16);
+      const collarMesh = new THREE.Mesh(collarGeo, upperMat);
+      collarMesh.position.set(-0.4, 0.4, 0);
+      collarMesh.rotation.z = -Math.PI / 10;
+      collarMesh.castShadow = true;
+      shoeGroup.add(collarMesh);
+
+      // Laces (Dynamic Cylinder lines)
+      lacesGroup = new THREE.Group();
+      lacesGroup.position.set(0.4, 0.35, 0);
+      const laceGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.72, 8);
+      const lacePositions = [-0.3, -0.1, 0.1, 0.3];
+      lacePositions.forEach(pos => {
+        const laceMesh = new THREE.Mesh(laceGeo, lacesMat);
+        laceMesh.position.set(pos, 0, 0);
+        laceMesh.rotation.set(Math.PI / 2, 0, Math.PI / 4);
+        lacesGroup.add(laceMesh);
+      });
+      shoeGroup.add(lacesGroup);
+
+      // Detail Accents (Toe and Heel Guards)
+      const guardGeo = new THREE.BoxGeometry(0.15, 0.55, 0.78);
+      detailsMesh = new THREE.Mesh(guardGeo, detailsMat);
+      detailsMesh.position.set(-1.02, 0.05, 0);
+      detailsMesh.castShadow = true;
+      shoeGroup.add(detailsMesh);
+
+      const toeGeo = new THREE.BoxGeometry(0.15, 0.25, 0.78);
+      const toeMesh = new THREE.Mesh(toeGeo, detailsMat);
+      toeMesh.position.set(1.02, -0.1, 0);
+      toeMesh.castShadow = true;
+      shoeGroup.add(toeMesh);
+
+      // Branding stripe stripes (Lightning line on side)
+      const stripeGeo = new THREE.BoxGeometry(1.1, 0.12, 0.03);
+      brandMesh1 = new THREE.Mesh(stripeGeo, brandMat);
+      brandMesh1.position.set(0.1, 0.05, 0.39);
+      brandMesh1.rotation.z = Math.PI / 6;
+      brandMesh1.castShadow = true;
+      shoeGroup.add(brandMesh1);
+
+      brandMesh2 = new THREE.Mesh(stripeGeo, brandMat);
+      brandMesh2.position.set(0.1, 0.05, -0.39);
+      brandMesh2.rotation.z = Math.PI / 6;
+      brandMesh2.castShadow = true;
+      shoeGroup.add(brandMesh2);
+
+      // Render Loop
+      const animate = () => {
+        requestAnimationFrame(animate);
+        
+        // Auto slow rotate if user is not actively panning
+        if (!controls.state === -1) {
+          shoeGroup.rotation.y += 0.003;
+        }
+
+        controls.update();
+        renderer.render(scene, camera);
+      };
+      
+      animate();
+
+      // Window resize listener
+      window.addEventListener('resize', () => {
+        camera.aspect = container.clientWidth / container.clientHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(container.clientWidth, container.clientHeight);
+      });
+    }
+
+    function setZone(zone, el) {
+      activeZone = zone;
+      const btns = document.querySelectorAll('.zone-btn');
+      btns.forEach(b => {
+        b.style.background = 'none';
+        b.style.borderColor = 'rgba(255,255,255,0.1)';
+      });
+      el.style.background = 'var(--blaze-orange)';
+      el.style.borderColor = 'transparent';
+
+      // Activate active swatch border
+      selectColor(shoeColors[activeZone]);
+    }
+
+    function selectColor(colorVal) {
+      shoeColors[activeZone] = colorVal;
+      
+      // Update ThreeJS materials color parameters
+      if (renderer) {
+        const threeColor = new THREE.Color(colorVal);
+        if (activeZone === 'upper') {
+          soleMesh.parent.children.forEach(mesh => {
+            if (mesh.geometry && mesh.geometry.type === 'CylinderGeometry' && mesh.position.y > 0.3 && mesh.position.x < 0) {
+              mesh.material.color = threeColor; // Collar
+            }
+          });
+          upperMesh.material.color = threeColor;
+        }
+        if (activeZone === 'sole') soleMesh.material.color = threeColor;
+        if (activeZone === 'laces') {
+          lacesGroup.children.forEach(lace => {
+            lace.material.color = threeColor;
+          });
+        }
+        if (activeZone === 'details') {
+          detailsMesh.material.color = threeColor;
+          soleMesh.parent.children.forEach(mesh => {
+            if (mesh.position.x > 1.0 && mesh.position.y < 0) mesh.material.color = threeColor; // Toe guard
+          });
+        }
+        if (activeZone === 'brand') {
+          brandMesh1.material.color = threeColor;
+          brandMesh1.material.emissive = threeColor;
+          brandMesh2.material.color = threeColor;
+          brandMesh2.material.emissive = threeColor;
+        }
+      }
+
+      // Render Active border on swatch button
+      const swatches = document.querySelectorAll('.swatch');
+      swatches.forEach(btn => {
+        // RGB to Hex helper comparison
+        const btnBg = rgbToHex(btn.style.backgroundColor);
+        if (btnBg === colorVal.toLowerCase()) {
+          swatches.forEach(s => s.style.borderColor = 'transparent');
+          btn.style.borderColor = 'var(--blaze-orange)';
+        }
+      });
+    }
+
+    function rgbToHex(rgb) {
+      if(!rgb) return '';
+      if(rgb.startsWith('#')) return rgb;
+      const rgbValues = rgb.match(/\d+/g);
+      if(!rgbValues) return '';
+      const r = parseInt(rgbValues[0]).toString(16).padStart(2, '0');
+      const g = parseInt(rgbValues[1]).toString(16).padStart(2, '0');
+      const b = parseInt(rgbValues[2]).toString(16).padStart(2, '0');
+      return `#${r}${g}${b}`;
+    }
+
+    function loadPreset(presetName) {
+      const presets = {
+        blaze: { upper: '#000000', sole: '#FF5A1F', laces: '#FFFFFF', details: '#FF2E2E', brand: '#FF5A1F' },
+        cyber: { upper: '#111111', sole: '#000000', laces: '#333333', details: '#333333', brand: '#00F0FF' },
+        volt: { upper: '#FFFFFF', sole: '#39FF14', laces: '#000000', details: '#000000', brand: '#39FF14' },
+        lava: { upper: '#FF2E2E', sole: '#000000', laces: '#FF5A1F', details: '#111111', brand: '#FF5A1F' }
+      };
+
+      const sel = presets[presetName];
+      if (sel) {
+        shoeColors = { ...sel };
+        // Sync whole shoe meshes colors
+        if(renderer) {
+          upperMesh.material.color = new THREE.Color(shoeColors.upper);
+          soleMesh.material.color = new THREE.Color(shoeColors.sole);
+          lacesGroup.children.forEach(lace => lace.material.color = new THREE.Color(shoeColors.laces));
+          detailsMesh.material.color = new THREE.Color(shoeColors.details);
+          brandMesh1.material.color = new THREE.Color(shoeColors.brand);
+          brandMesh1.material.emissive = new THREE.Color(shoeColors.brand);
+          brandMesh2.material.color = new THREE.Color(shoeColors.brand);
+          brandMesh2.material.emissive = new THREE.Color(shoeColors.brand);
+        }
+        // Active border
+        const activeTabBtn = document.querySelector('.zone-btn.active');
+        if(activeTabBtn) activeTabBtn.click();
+      }
+    }
+
+    function resetShoe() {
+      loadPreset('blaze');
+    }
+
+    function addCustomShoeToCart() {
+      // Custom mock item
+      const customP = {
+        id: 'custom-sneaker',
+        name: 'BLAZE Lab Bespoke Carbon Custom',
+        price: 220,
+        description: 'Your custom-designed performance sneaker. Tailored using premium carbon propulsion soles, moisture-resistant AeroKnit uppers, and personalized aesthetic highlights.',
+        category: 'sneakers',
+        subCategory: 'Limited Editions',
+        images: ['https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800'],
+        colors: [{ name: 'Customized', value: shoeColors.brand }],
+        sizes: ['9.5'],
+        rating: 5.0,
+        reviewsCount: 1,
+        sustainable: true,
+        stockStatus: 'in-stock',
+        stockCount: 1,
+        specs: ['Customized upper shell mesh', 'Optimized custom foam cushioning']
+      };
+
+      addToCart(customP.id, 1, shoeColors.sole, '9.5');
+      alert('Custom Bespoke Sneaker added to your bag!');
+    }
+
+    function startCountdown() {
+      let hrs = 4, mins = 12, secs = 45;
+      const el = document.getElementById('drop-timer');
+      if(!el) return;
+
+      setInterval(() => {
+        if(secs > 0) secs--;
+        else {
+          secs = 59;
+          if(mins > 0) mins--;
+          else {
+            mins = 59;
+            if(hrs > 0) hrs--;
+          }
+        }
+        el.innerText = `${hrs.toString().padStart(2,'0')}h : ${mins.toString().padStart(2,'0')}m : ${secs.toString().padStart(2,'0')}s`;
+      }, 1000);
+    }
+  </script>
+</body>
+</html>

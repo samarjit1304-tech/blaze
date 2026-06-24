@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAZE | Catalog Discovery</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="navbar-container"></div>
+
+  <!-- Shop Main Content -->
+  <main class="py-24" style="max-w:1440px; margin:0 auto; padding-top:120px;">
+    
+    <!-- Header -->
+    <div class="section-header">
+      <div>
+        <p class="section-label">BLAZE GEAR DIRECTORY</p>
+        <h2 class="section-title" id="shop-page-title">SHOP ALL PRODUCTS</h2>
+        <p class="section-label" id="results-count" style="margin-top:8px; color:rgba(255,255,255,0.4)">FOUND 0 PREMIUM PIECES</p>
+      </div>
+    </div>
+
+    <!-- AI Filter Row -->
+    <div class="nav-container" style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:16px 24px; border-radius:16px; margin:0 48px 32px; gap:20px;">
+      <!-- Search Input -->
+      <div style="position:relative; flex:1; display:flex; align-items:center;">
+        <i data-lucide="search" style="position:absolute; left:16px; color:rgba(255,255,255,0.4); width:18px; height:18px;"></i>
+        <input type="text" id="shop-search-input" placeholder="AI SEARCH: SEARCH GEAR BY STYLE, SPORT, ACCENTS..." style="width:100%; bg:none; background:#000; border:1px solid rgba(255,255,255,0.05); color:white; padding:14px 16px 14px 48px; border-radius:12px; font-size:10px; font-weight:700; tracking-wider; text-transform:uppercase; outline:none; font-family:var(--font-display);">
+      </div>
+
+      <!-- Sorting -->
+      <div style="display:flex; gap:16px; align-items:center;">
+        <select id="sort-selector" onchange="applyFilters()" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px 24px; border-radius:12px; font-size:10px; font-weight:700; text-transform:uppercase; cursor:pointer;">
+          <option value="featured">Featured</option>
+          <option value="price-low">Price: Low-High</option>
+          <option value="price-high">Price: High-Low</option>
+          <option value="rating">Rating</option>
+          <option value="best-seller">Best Sellers</option>
+        </select>
+        
+        <button onclick="resetFilters()" style="background:rgba(255,255,255,0.05); color:white; border:none; padding:12px 20px; border-radius:12px; font-size:10px; font-weight:700; text-transform:uppercase; cursor:pointer;">RESET</button>
+      </div>
+    </div>
+
+    <!-- Main Filters + Grid Body -->
+    <div style="display:grid; grid-template-columns: 3fr 9fr; gap:40px; margin:0 48px;">
+      
+      <!-- Left: Filter sidebar (3 cols) -->
+      <aside class="glass-panel" style="padding:32px; border-radius:24px; display:flex; flex-direction:column; gap:32px; height:fit-content;">
+        
+        <!-- Category division -->
+        <div>
+          <h4 style="font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:0.1em; margin-bottom:12px;">DIVISION</h4>
+          <div style="display:flex; flex-direction:column; gap:8px; font-size:12px; font-weight:600;" id="filter-cat-links">
+            <a href="#" onclick="setFilterCat('all', this)" class="active" style="color:var(--blaze-orange)">All Divisions</a>
+            <a href="#" onclick="setFilterCat('men', this)" style="color:rgba(255,255,255,0.6)">Men's Apparel</a>
+            <a href="#" onclick="setFilterCat('women', this)" style="color:rgba(255,255,255,0.6)">Women's Apparel</a>
+            <a href="#" onclick="setFilterCat('sneakers', this)" style="color:rgba(255,255,255,0.6)">Sneakers</a>
+            <a href="#" onclick="setFilterCat('accessories', this)" style="color:rgba(255,255,255,0.6)">Accessories</a>
+          </div>
+        </div>
+
+        <!-- Price slide slider -->
+        <div>
+          <div style="display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:0.1em; margin-bottom:12px;">
+            <span>MAX PRICE</span>
+            <span id="price-limit-display" style="color:white; font-weight:900;">$350.00</span>
+          </div>
+          <input type="range" id="price-slider" min="20" max="350" value="350" step="5" oninput="document.getElementById('price-limit-display').innerText = formatPrice(this.value); applyFilters();" style="width:100%; accent-color:var(--blaze-orange); cursor:pointer;">
+        </div>
+
+        <!-- Color accents -->
+        <div>
+          <h4 style="font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:0.1em; margin-bottom:12px;">ACCENT COLOR</h4>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;" id="filter-colors-box">
+            <button onclick="setFilterColor('all', this)" class="active" style="width:24px; height:24px; border-radius:50px; border:2px solid var(--blaze-orange); background:none; color:white; font-size:8px; font-weight:900; cursor:pointer;">ALL</button>
+            <!-- Injected swatches -->
+          </div>
+        </div>
+
+        <!-- Size grid selector -->
+        <div>
+          <h4 style="font-size:10px; color:rgba(255,255,255,0.4); letter-spacing:0.1em; margin-bottom:12px;">SIZE ACCENTS</h4>
+          <div style="display:flex; gap:6px; flex-wrap:wrap;" id="filter-sizes-box">
+            <button onclick="setFilterSize('all', this)" class="active" style="padding:6px 10px; border:1px solid transparent; background:var(--blaze-orange); color:white; font-size:9px; font-weight:900; cursor:pointer; border-radius:4px;">ALL</button>
+            <!-- Injected size tags -->
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- Right: Grid of cards -->
+      <div style="display:flex; flex-direction:column; gap:40px;">
+        <div class="products-grid" id="catalog-products-grid" style="padding:0; grid-template-columns: repeat(3, 1fr);">
+          <!-- Injected dynamically via JS -->
+        </div>
+
+        <!-- Pagination navigation panel -->
+        <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-top:20px;" id="shop-pagination">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="products-db.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    // Filter parameters state
+    let activeCat = 'all';
+    let activeSubCat = 'all';
+    let activeColor = 'all';
+    let activeSize = 'all';
+    let currentPage = 1;
+    const itemsPerPage = 9;
+
+    function renderPageUI() {
+      // Check for query filters on first load
+      const params = new URLSearchParams(window.location.search);
+      const urlCat = params.get('category');
+      const urlSub = params.get('subCategory');
+      const urlSearch = params.get('search');
+      const wishlistOnly = params.get('wishlist');
+
+      if (urlCat) activeCat = urlCat;
+      if (urlSub) activeSubCat = urlSub;
+      if (urlSearch) document.getElementById('shop-search-input').value = urlSearch;
+      if (wishlistOnly === 'true') activeCat = 'wishlist';
+
+      // Set division sidebar links active status
+      const catLinks = document.querySelectorAll('#filter-cat-links a');
+      catLinks.forEach(link => {
+        const h = link.innerText.toLowerCase();
+        if (h.includes(activeCat)) {
+          catLinks.forEach(l => { l.style.color = 'rgba(255,255,255,0.6)'; l.classList.remove('active'); });
+          link.style.color = 'var(--blaze-orange)';
+          link.classList.add('active');
+        }
+      });
+
+      // Render filter color swatches
+      const colorsBox = document.getElementById('filter-colors-box');
+      if (colorsBox && colorsBox.children.length === 1) {
+        const swatches = [
+          { name: 'Core Black', value: '#000000' },
+          { name: 'Blaze Orange', value: '#FF5A1F' },
+          { name: 'Electric Red', value: '#FF2E2E' },
+          { name: 'Stealth Gray', value: '#333333' },
+          { name: 'Pure White', value: '#FFFFFF' },
+          { name: 'Volt Green', value: '#39FF14' },
+          { name: 'Deep Navy', value: '#0A192F' }
+        ];
+        swatches.forEach(c => {
+          colorsBox.innerHTML += `<button onclick="setFilterColor('${c.value}', this)" class="swatch-btn" style="width:24px; height:24px; border-radius:50px; border:2px solid transparent; background-color:${c.value}; cursor:pointer;" title="${c.name}"></button>`;
+        });
+      }
+
+      // Render sizes buttons
+      const sizesBox = document.getElementById('filter-sizes-box');
+      if (sizesBox && sizesBox.children.length === 1) {
+        const sizes = ['S', 'M', 'L', 'XL', 'XXL', '7', '8', '9', '10', '11', '12'];
+        sizes.forEach(s => {
+          sizesBox.innerHTML += `<button onclick="setFilterSize('${s}', this)" class="size-btn" style="padding:6px 10px; border:1px solid rgba(255,255,255,0.1); background:none; color:white; font-size:9px; font-weight:700; cursor:pointer; border-radius:4px;">${s}</button>`;
+        });
+      }
+
+      // Initial filter execution
+      applyFilters();
+
+      // Hook Search inputs keydown
+      document.getElementById('shop-search-input').addEventListener('input', () => {
+        currentPage = 1;
+        applyFilters();
+      });
+    }
+
+    function setFilterCat(val, el) {
+      activeCat = val;
+      const links = document.querySelectorAll('#filter-cat-links a');
+      links.forEach(l => { l.style.color = 'rgba(255,255,255,0.6)'; l.classList.remove('active'); });
+      el.style.color = 'var(--blaze-orange)';
+      el.classList.add('active');
+      currentPage = 1;
+      applyFilters();
+    }
+
+    function setFilterColor(val, el) {
+      activeColor = val;
+      const btns = document.querySelectorAll('#filter-colors-box button');
+      btns.forEach(btn => { btn.style.borderColor = 'transparent'; btn.classList.remove('active'); });
+      
+      if (val === 'all') {
+        el.style.borderColor = 'var(--blaze-orange)';
+      } else {
+        el.style.borderColor = 'var(--blaze-orange)';
+      }
+      el.classList.add('active');
+      currentPage = 1;
+      applyFilters();
+    }
+
+    function setFilterSize(val, el) {
+      activeSize = val;
+      const btns = document.querySelectorAll('#filter-sizes-box button');
+      btns.forEach(btn => { 
+        btn.style.background = 'none'; 
+        btn.style.borderColor = 'rgba(255,255,255,0.1)';
+        btn.classList.remove('active'); 
+      });
+      el.style.background = 'var(--blaze-orange)';
+      el.style.borderColor = 'transparent';
+      el.classList.add('active');
+      currentPage = 1;
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const grid = document.getElementById('catalog-products-grid');
+      const countLabel = document.getElementById('results-count');
+      if (!grid) return;
+
+      const searchVal = document.getElementById('shop-search-input').value.trim().toLowerCase();
+      const maxPrice = Number(document.getElementById('price-slider').value);
+      const sortBy = document.getElementById('sort-selector').value;
+
+      // 1. Process Filtering
+      let results = window.products.filter(p => {
+        // Division
+        if (activeCat === 'wishlist') {
+          const isWL = state.wishlist.some(item => item.id === p.id);
+          if (!isWL) return false;
+        } else if (activeCat !== 'all' && p.category !== activeCat) {
+          return false;
+        }
+
+        // Subdivision query hook
+        if (activeSubCat !== 'all' && p.subCategory !== activeSubCat) return false;
+
+        // Price
+        if (p.price > maxPrice) return false;
+
+        // Accent Color
+        if (activeColor !== 'all' && !p.colors.some(c => c.value === activeColor)) return false;
+
+        // Size
+        if (activeSize !== 'all' && !p.sizes.includes(activeSize)) return false;
+
+        // Search Match
+        if (searchVal !== '') {
+          return p.name.toLowerCase().includes(searchVal) ||
+                 p.description.toLowerCase().includes(searchVal) ||
+                 p.subCategory.toLowerCase().includes(searchVal);
+        }
+
+        return true;
+      });
+
+      // 2. Process Sorting
+      if (sortBy === 'price-low') results.sort((a,b) => a.price - b.price);
+      if (sortBy === 'price-high') results.sort((a,b) => b.price - a.price);
+      if (sortBy === 'rating') results.sort((a,b) => b.rating - a.rating);
+      if (sortBy === 'best-seller') results.sort((a,b) => (b.bestSeller?1:0) - (a.bestSeller?1:0));
+
+      // Display metrics
+      if (countLabel) {
+        if (activeCat === 'wishlist') {
+          document.getElementById('shop-page-title').innerText = 'YOUR WISHLIST COLLECTION';
+        } else {
+          document.getElementById('shop-page-title').innerText = 'SHOP ALL PRODUCTS';
+        }
+        countLabel.innerText = `FOUND ${results.length} PREMIUM PIECES`;
+      }
+
+      // 3. Process Pagination
+      const totalPages = Math.ceil(results.length / itemsPerPage);
+      if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+      
+      const boundsStart = (currentPage - 1) * itemsPerPage;
+      const boundsEnd = currentPage * itemsPerPage;
+      const visible = results.slice(boundsStart, boundsEnd);
+
+      // Render cards
+      if (visible.length === 0) {
+        grid.innerHTML = `
+          <div style="grid-column:1/-1; padding:80px 0; text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px;">
+            <i data-lucide="help-circle" style="width:48px; height:48px; color:rgba(255,255,255,0.08);"></i>
+            <div>
+              <h3 style="font-size:16px;">NO GEAR FOUND</h3>
+              <p style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:8px;">Reset filters or change search queries to unlock sportswear.</p>
+            </div>
+          </div>
+        `;
+      } else {
+        grid.innerHTML = visible.map(p => {
+          const isWL = state.wishlist.some(item => item.id === p.id);
+          return `
+            <div class="product-card">
+              <div class="product-img-box">
+                <img src="${p.images[0]}" class="primary" alt="${p.name}">
+                ${p.images[1] ? `<img src="${p.images[1]}" class="secondary" alt="${p.name}">` : ''}
+                <div class="card-actions-overlay">
+                  <a href="product.html?id=${p.id}" class="btn-icon"><i data-lucide="eye"></i></a>
+                  <button class="btn-icon" onclick="addToCart('${p.id}', 1, '${p.colors[0]?.value || '#000'}', '${p.sizes[0] || 'M'}')"><i data-lucide="shopping-bag"></i></button>
+                </div>
+                <div class="card-badges">
+                  ${p.badge ? `<span class="badge-tag badge-orange">${p.badge}</span>` : ''}
+                  ${p.sustainable ? `<span class="badge-tag badge-green">SUSTAINABLE</span>` : ''}
+                </div>
+                <button class="card-wishlist-btn ${isWL ? 'active' : ''}" onclick="toggleWishlist('${p.id}'); applyFilters();"><i data-lucide="heart" style="width:14px; height:14px;"></i></button>
+              </div>
+              <div class="product-details">
+                <div>
+                  <div class="rating-row">
+                    <i data-lucide="star" style="width:12px; height:12px; fill:currentColor"></i>
+                    <strong>${p.rating}</strong> <span>(${p.reviewsCount})</span>
+                  </div>
+                  <h3 class="card-title"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+                  <p class="card-subcat">${p.subCategory}</p>
+                </div>
+                <div class="price-row">
+                  <span class="card-price">${formatPrice(p.price)}</span>
+                  ${p.stockCount <= 3 ? `<span class="stock-tag low">ONLY ${p.stockCount} LEFT!</span>` : `<span class="stock-tag">IN STOCK</span>`}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Render Pagination Buttons
+      const pag = document.getElementById('shop-pagination');
+      if (pag) {
+        if (totalPages <= 1) {
+          pag.innerHTML = '';
+        } else {
+          pag.innerHTML = `
+            <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.3; pointer-events:none"' : ''} style="padding:10px 16px; background:rgba(255,255,255,0.05); color:white; border:none; border-radius:6px; font-weight:700; cursor:pointer;">PREV</button>
+            <span style="font-size:11px; font-weight:700; color:rgba(255,255,255,0.6);">PAGE ${currentPage} OF ${totalPages}</span>
+            <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.3; pointer-events:none"' : ''} style="padding:10px 16px; background:rgba(255,255,255,0.05); color:white; border:none; border-radius:6px; font-weight:700; cursor:pointer;">NEXT</button>
+          `;
+        }
+      }
+
+      lucide.createIcons();
+    }
+
+    function changePage(num) {
+      currentPage = num;
+      applyFilters();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetFilters() {
+      activeCat = 'all';
+      activeSubCat = 'all';
+      activeColor = 'all';
+      activeSize = 'all';
+      currentPage = 1;
+      document.getElementById('shop-search-input').value = '';
+      document.getElementById('price-slider').value = 350;
+      
+      const catLinks = document.querySelectorAll('#filter-cat-links a');
+      catLinks.forEach(link => { link.style.color = 'rgba(255,255,255,0.6)'; link.classList.remove('active'); });
+      catLinks[0].style.color = 'var(--blaze-orange)';
+      catLinks[0].classList.add('active');
+
+      const colorBtns = document.querySelectorAll('#filter-colors-box button');
+      colorBtns.forEach(btn => btn.style.borderColor = 'transparent');
+      colorBtns[0].style.borderColor = 'var(--blaze-orange)';
+
+      const sizeBtns = document.querySelectorAll('#filter-sizes-box button');
+      sizeBtns.forEach(btn => { btn.style.background = 'none'; btn.style.borderColor = 'rgba(255,255,255,0.1)'; });
+      sizeBtns[0].style.background = 'var(--blaze-orange)';
+      sizeBtns[0].style.borderColor = 'transparent';
+
+      applyFilters();
+    }
+  </script>
+</body>
+</html>

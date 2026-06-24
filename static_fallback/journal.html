@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAZE | Journal Editorial</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="navbar-container"></div>
+
+  <main class="py-24" style="max-w:1440px; margin:0 auto; padding-top:120px; display:flex; flex-direction:column; gap:60px;">
+    
+    <!-- Editorial Header & Tabs -->
+    <section style="display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:32px; margin:0 48px;" class="section-header">
+      <div>
+        <p class="section-label">BLAZE INTELLECT</p>
+        <h1 style="font-size:48px;">BLAZE JOURNAL</h1>
+      </div>
+      
+      <div style="display:flex; gap:8px; flex-wrap:wrap;" id="journal-categories-box">
+        <!-- Injected via JS -->
+      </div>
+    </section>
+
+    <!-- Main Featured Article Banner -->
+    <section style="margin:0 48px; display:none;" id="featured-article-container">
+      <!-- Injected via JS -->
+    </section>
+
+    <!-- Grid List Articles -->
+    <section class="products-grid" id="journal-grid" style="margin:0 48px; padding:0; grid-template-columns: repeat(3, 1fr);">
+      <!-- Injected via JS -->
+    </section>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="products-db.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    let activeCategory = 'ALL';
+    let savedBookmarks = [];
+
+    const ARTICLES = [
+      {
+        id: 'art-1',
+        category: 'SNEAKER CULTURE',
+        title: 'THE SCIENCE OF BREAKING RUNNING SPEEDBARRIERS',
+        excerpt: 'How carbon fiber plate inserts and dynamic Pebax foam geometries work together to return up to 90% of landing force back into forward propulsion.',
+        author: 'DR. ARIS VANCE',
+        date: 'JUNE 22, 2026',
+        readTime: '6 MIN READ',
+        image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&q=80&w=800',
+        featured: true
+      },
+      {
+        id: 'art-2',
+        category: 'TRAINING',
+        title: 'THE HYPERTROPHY STRATEGIES OF CHAMPIONS',
+        excerpt: 'Uncover the exact periodization strategies and nutrition cycles sprint athletes leverage in off-season camps to build explosive power.',
+        author: 'MARCUS VANE',
+        date: 'MAY 15, 2026',
+        readTime: '8 MIN READ',
+        image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=800',
+        featured: false
+      },
+      {
+        id: 'art-3',
+        category: 'NUTRITION',
+        title: 'GLYCOGEN FUELING MECHANISMS IN ULTRA RUNS',
+        excerpt: 'Detailed analysis of carbohydrate loading thresholds and digestive timing cycles to prevent energy depleting crashes in high elevation climbs.',
+        author: 'ELENA ROSTOVA',
+        date: 'APRIL 10, 2026',
+        readTime: '5 MIN READ',
+        image: 'https://images.unsplash.com/photo-1506152983158-b4a74a01c721?auto=format&fit=crop&q=80&w=800',
+        featured: false
+      },
+      {
+        id: 'art-4',
+        category: 'FASHION TRENDS',
+        title: 'THE NEW CROSSOVER: SPORTSWEAR IN MODERN STREETWEAR',
+        excerpt: 'Exploring how aesthetic high-glow color details and compression fibers are migrating directly from active race tracks into global fashion runaways.',
+        author: 'KAI CHEN',
+        date: 'MARCH 28, 2026',
+        readTime: '4 MIN READ',
+        image: 'https://images.unsplash.com/photo-1518310383802-640c2de311b2?auto=format&fit=crop&q=80&w=800',
+        featured: false
+      }
+    ];
+
+    function renderPageUI() {
+      // Load bookmarks
+      const saved = localStorage.getItem('blaze_bookmarks');
+      if (saved) savedBookmarks = JSON.parse(saved);
+
+      // Render Categories Selector tabs
+      const categories = ['ALL', 'SNEAKER CULTURE', 'TRAINING', 'NUTRITION', 'FASHION TRENDS'];
+      const box = document.getElementById('journal-categories-box');
+      if (box) {
+        box.innerHTML = categories.map(cat => `
+          <button onclick="setCategory('${cat}', this)" class="cat-tab ${cat===activeCategory ? 'active' : ''}" style="padding:10px 20px; background:${cat===activeCategory ? 'var(--blaze-orange)' : 'none'}; border:1px solid ${cat===activeCategory ? 'transparent' : 'rgba(255,255,255,0.1)'}; color:white; font-size:10px; font-weight:700; border-radius:50px; cursor:pointer;">${cat}</button>
+        `).join('');
+      }
+
+      applyFilters();
+    }
+
+    function setCategory(cat, el) {
+      activeCategory = cat;
+      const tabs = document.querySelectorAll('.cat-tab');
+      tabs.forEach(t => { t.style.background = 'none'; t.style.borderColor = 'rgba(255,255,255,0.1)'; });
+      el.style.background = 'var(--blaze-orange)';
+      el.style.borderColor = 'transparent';
+
+      applyFilters();
+    }
+
+    function toggleBookmark(id) {
+      if (savedBookmarks.includes(id)) {
+        savedBookmarks = savedBookmarks.filter(item => item !== id);
+      } else {
+        savedBookmarks.push(id);
+      }
+      localStorage.setItem('blaze_bookmarks', JSON.stringify(savedBookmarks));
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const featContainer = document.getElementById('featured-article-container');
+      const grid = document.getElementById('journal-grid');
+      
+      const filtered = activeCategory === 'ALL'
+        ? ARTICLES
+        : ARTICLES.filter(art => art.category === activeCategory);
+
+      // Render Featured article if Category = ALL
+      const featured = ARTICLES.find(art => art.featured);
+      if (featured && activeCategory === 'ALL') {
+        featContainer.style.display = 'block';
+        const isSaved = savedBookmarks.includes(featured.id);
+        featContainer.innerHTML = `
+          <div class="glass-panel" style="border-radius:24px; overflow:hidden; display:grid; grid-template-columns: 7fr 5fr; min-height:380px;">
+            <div style="background:#0d0d0d; overflow:hidden; min-height:260px;">
+              <img src="${featured.image}" style="width:100%; height:100%; object-fit:cover; filter:brightness(0.85);" />
+            </div>
+            <div style="padding:40px; display:flex; flex-direction:column; justify-content:space-between; gap:20px;">
+              <div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <span style="font-size:9px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.1em; text-transform:uppercase;">${featured.category}</span>
+                  <button onclick="toggleBookmark('${featured.id}')" style="background:none; border:none; color:${isSaved?'var(--blaze-orange)':'rgba(255,255,255,0.4)'}; cursor:pointer;"><i data-lucide="bookmark" style="${isSaved?'fill:currentColor':''}"></i></button>
+                </div>
+                <h3 style="font-size:24px; margin-top:8px;">${featured.title}</h3>
+                <p style="font-size:11px; color:rgba(255,255,255,0.6); line-height:1.6; margin-top:12px;">${featured.excerpt}</p>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:center; font-size:10px; color:rgba(255,255,255,0.4); font-weight:700; border-top:1px solid rgba(255,255,255,0.05); padding-top:16px;">
+                <span>BY ${featured.author}</span>
+                <span>${featured.date} • ${featured.readTime}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        featContainer.style.display = 'none';
+      }
+
+      // Render secondary Grid articles
+      const visibleGrid = filtered.filter(art => !art.featured || activeCategory !== 'ALL');
+      if (visibleGrid.length === 0) {
+        grid.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:40px; font-size:12px; color:rgba(255,255,255,0.4)">NO ARTICLES LOGGED UNDER THIS DIVISION</p>`;
+      } else {
+        grid.innerHTML = visibleGrid.map(art => {
+          const isSaved = savedBookmarks.includes(art.id);
+          return `
+            <div class="product-card" style="border-radius:16px; background:rgba(255,255,255,0.015)">
+              <div class="product-img-box" style="aspect-ratio: 16/10">
+                <img src="${art.image}" style="width:100%; height:100%; object-fit:cover;" />
+                <div class="card-badges" style="top:12px; left:12px; flex-direction:row; align-items:center; justify-content:between; width:calc(100% - 24px);">
+                  <span class="badge-tag" style="background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); color:var(--blaze-orange); padding:4px 8px; font-size:8px;">${art.category}</span>
+                  <button onclick="toggleBookmark('${art.id}')" style="background:none; border:none; color:${isSaved?'var(--blaze-orange)':'rgba(255,255,255,0.6)'}; cursor:pointer;"><i data-lucide="bookmark" style="width:14px; height:14px; ${isSaved?'fill:currentColor':''}"></i></button>
+                </div>
+              </div>
+              <div style="padding:24px; flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:20px;">
+                <div>
+                  <h3 style="font-size:14px; line-height:1.4; font-weight:700;">${art.title}</h3>
+                  <p style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.5; margin-top:8px;">${art.excerpt}</p>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center; font-size:9px; color:rgba(255,255,255,0.4); font-weight:700; border-top:1px solid rgba(255,255,255,0.05); padding-top:12px;">
+                  <span>BY ${art.author.split(' ')[0]}</span>
+                  <span>${art.readTime}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      lucide.createIcons();
+    }
+  </script>
+</body>
+</html>

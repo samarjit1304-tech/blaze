@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAZE | Support Center</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="navbar-container"></div>
+
+  <main class="py-24" style="max-w:1440px; margin:0 auto; padding-top:120px; display:flex; flex-direction:column; gap:80px;">
+    
+    <!-- Hero Title -->
+    <section style="text-align:center; display:flex; flex-direction:column; gap:24px; margin:40px 48px 0;">
+      <p class="section-label">BLAZE RELATION SUPPORT</p>
+      <h1 style="font-size:64px; line-height:1; max-w:800px; margin:0 auto;">SUPPORT <span style="background: linear-gradient(135deg, var(--blaze-orange), var(--electric-red)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">CENTER</span></h1>
+      <p style="font-size:14px; color:rgba(255,255,255,0.6); max-w:600px; margin:0 auto; line-height:1.6;">Access our simulated order tracker, consult our Helix AI assistant, locate global flagship physical storefronts, or write directly to our client services desk.</p>
+    </section>
+
+    <!-- Navigation Tabs -->
+    <section style="display:flex; justify-content:center; gap:16px; margin:0 48px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:24px;" class="section-header">
+      <button onclick="setTab('form', this)" class="tab-btn active" style="padding:12px 24px; background:var(--blaze-orange); border:1px solid transparent; color:white; font-size:10px; font-weight:900; border-radius:12px; cursor:pointer;">CONTACT DESK</button>
+      <button onclick="setTab('chat', this)" class="tab-btn" style="padding:12px 24px; background:none; border:1px solid rgba(255,255,255,0.1); color:white; font-size:10px; font-weight:900; border-radius:12px; cursor:pointer;">HELIX AI ASSISTANT</button>
+      <button onclick="setTab('tracking', this)" class="tab-btn" style="padding:12px 24px; background:none; border:1px solid rgba(255,255,255,0.1); color:white; font-size:10px; font-weight:900; border-radius:12px; cursor:pointer;">ORDER TRACKER</button>
+      <button onclick="setTab('locator', this)" class="tab-btn" style="padding:12px 24px; background:none; border:1px solid rgba(255,255,255,0.1); color:white; font-size:10px; font-weight:900; border-radius:12px; cursor:pointer;">FLAGSHIPS</button>
+    </section>
+
+    <!-- Tab Contents Panels -->
+    <section style="max-w:850px; margin:0 auto; width:100%; padding:0 24px;" id="tabs-content-panels">
+      
+      <!-- A. Contact Form panel -->
+      <div id="panel-form" class="tab-panel glass-panel" style="padding:40px; border-radius:24px; border:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; gap:24px;">
+        <div>
+          <h3 style="font-size:18px;">CLIENT INQUIRY DESK</h3>
+          <p style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px;">Expected response: less than 12 business hours.</p>
+        </div>
+        
+        <form onsubmit="submitContactForm(event)" style="display:flex; flex-direction:column; gap:16px; font-size:11px; font-weight:700;">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="color:rgba(255,255,255,0.4)">YOUR NAME</label>
+              <input type="text" id="contact-name" required style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="color:rgba(255,255,255,0.4)">EMAIL ADDRESS</label>
+              <input type="email" id="contact-email" required style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="color:rgba(255,255,255,0.4)">ORDER ID (OPTIONAL)</label>
+            <input type="text" id="contact-order-id" placeholder="e.g. BLZ-98741" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+          </div>
+          <div style="display:flex; flex-direction:column; gap:6px;">
+            <label style="color:rgba(255,255,255,0.4)">MESSAGE DETAIL</label>
+            <textarea id="contact-msg" rows="5" required style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;"></textarea>
+          </div>
+          <button type="submit" class="btn-primary w-full" style="padding:14px 0; border-radius:8px;">SEND SECURE MESSAGE</button>
+        </form>
+      </div>
+
+      <!-- B. Chat Panel -->
+      <div id="panel-chat" class="tab-panel glass-panel" style="padding:0; border-radius:24px; border:1px solid rgba(255,255,255,0.05); display:none; flex-direction:column; overflow:hidden;">
+        <div style="padding:20px; border-bottom:1px solid rgba(255,255,255,0.05); display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <h3 style="font-size:14px;">HELIX CONVERSATIONAL AI</h3>
+            <p style="font-size:8px; color:var(--blaze-orange); font-weight:700; margin-top:2px;">● HELIX INSTANT ONLINE</p>
+          </div>
+        </div>
+        
+        <div class="chat-body" id="chat-messages-box">
+          <div class="chat-bubble ai">HELLO, I AM THE BLAZE HELIX ASSISTANT. HOW CAN I IGNITE YOUR POTENTIAL TODAY?</div>
+        </div>
+
+        <form onsubmit="sendChatMessage(event)" style="display:flex; gap:12px; padding:16px; border-top:1px solid rgba(255,255,255,0.05); background:rgba(0,0,0,0.6);">
+          <input type="text" id="chat-input-text" placeholder="ASK HELIX: 'WHAT IS YOUR SNEAKER RETURN POLICY?' OR 'HOW FAST IS SHIPPING?'" required style="flex:1; background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:14px; border-radius:12px; outline:none; font-size:10px; font-weight:700; text-transform:uppercase;">
+          <button type="submit" class="btn-primary" style="padding:14px 20px; border-radius:12px;"><i data-lucide="send"></i></button>
+        </form>
+      </div>
+
+      <!-- C. Order Tracker panel -->
+      <div id="panel-tracking" class="tab-panel glass-panel" style="padding:40px; border-radius:24px; border:1px solid rgba(255,255,255,0.05); display:none; flex-direction:column; gap:24px;">
+        <div>
+          <h3 style="font-size:18px;">ORDER LOGISTICS TRACKER</h3>
+          <p style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px;">Enter your BLAZE purchase reference identifier.</p>
+        </div>
+
+        <form onsubmit="trackOrderSubmit(event)" style="display:flex; gap:12px;">
+          <input type="text" id="tracking-input-id" required placeholder="ENTER ORDER ID (e.g. BLZ-98741)" style="flex:1; background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:14px; border-radius:12px; outline:none; font-size:10px; font-weight:700; text-transform:uppercase;">
+          <button type="submit" class="btn-primary" style="padding:14px 24px; border-radius:12px;">TRACK</button>
+        </form>
+
+        <div id="tracking-result-box"></div>
+      </div>
+
+      <!-- D. Store Locator panel -->
+      <div id="panel-locator" class="tab-panel" style="display:none; grid-template-columns:1fr 1fr; gap:24px;" class="cat-grid">
+        <div class="glass-panel" style="padding:24px; border-radius:16px; border:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:start;">
+            <span style="font-size:12px; font-weight:700; color:var(--blaze-orange);">NEW YORK FLAGSHIP</span>
+            <i data-lucide="map-pin" style="color:var(--blaze-orange)"></i>
+          </div>
+          <p style="font-size:12px; color:rgba(255,255,255,0.7)">540 Madison Ave, Manhattan<br><span style="font-size:9px; color:rgba(255,255,255,0.4); font-weight:700; display:block; margin-top:4px;">OPEN DAILY: 10:00 AM - 08:00 PM</span></p>
+        </div>
+        <div class="glass-panel" style="padding:24px; border-radius:16px; border:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; gap:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:start;">
+            <span style="font-size:12px; font-weight:700; color:var(--blaze-orange);">TOKYO FLAGSHIP</span>
+            <i data-lucide="map-pin" style="color:var(--blaze-orange)"></i>
+          </div>
+          <p style="font-size:12px; color:rgba(255,255,255,0.7)">Shibuya Crossing Tower, Level 2<br><span style="font-size:9px; color:rgba(255,255,255,0.4); font-weight:700; display:block; margin-top:4px;">OPEN DAILY: 11:00 AM - 09:00 PM</span></p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- FAQs list Accordion -->
+    <section style="max-w:850px; margin:0 auto; width:100%; padding:0 24px; display:flex; flex-direction:column; gap:16px;">
+      <h2 style="font-size:24px; text-align:center; display:flex; align-items:center; justify-content:center; gap:8px;"><i data-lucide="help-circle" style="color:var(--blaze-orange)"></i> REPEATED FAQS</h2>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;" class="cat-grid">
+        <div class="glass-panel" style="padding:24px; border-radius:16px; display:flex; flex-direction:column; gap:8px;">
+          <h4 style="font-size:12px; color:white;">HOW LONG DOES GLOBAL SHIPPING TAKE?</h4>
+          <p style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.6;">We ship from hubs in New York, Munich, and Tokyo. Express shipping takes 2-4 business days. Standard shipping takes 5-7 business days.</p>
+        </div>
+        <div class="glass-panel" style="padding:24px; border-radius:16px; display:flex; flex-direction:column; gap:8px;">
+          <h4 style="font-size:12px; color:white;">WHAT IS YOUR SNEAKER RETURN POLICY?</h4>
+          <p style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.6;">We offer a 30-day trial return window. You can wear the shoes and run in them. If you are not satisfied, return them for a full refund in the original box.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="products-db.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    function renderPageUI() {
+      // Check query parameter tabs
+      const params = new URLSearchParams(window.location.search);
+      const urlTab = params.get('tab');
+      if (urlTab === 'tracking') {
+        document.querySelectorAll('.tab-btn')[2].click();
+      } else if (urlTab === 'locator') {
+        document.querySelectorAll('.tab-btn')[3].click();
+      }
+    }
+
+    function setTab(tabId, el) {
+      const panels = document.querySelectorAll('.tab-panel');
+      panels.forEach(p => p.style.display = 'none');
+
+      const btns = document.querySelectorAll('.tab-btn');
+      btns.forEach(b => {
+        b.style.background = 'none';
+        b.style.borderColor = 'rgba(255,255,255,0.1)';
+      });
+
+      el.style.background = 'var(--blaze-orange)';
+      el.style.borderColor = 'transparent';
+
+      const activePanel = document.getElementById(`panel-${tabId}`);
+      if (activePanel) {
+        if(tabId === 'locator') {
+          activePanel.style.display = 'grid';
+        } else {
+          activePanel.style.display = 'flex';
+        }
+      }
+    }
+
+    function submitContactForm(e) {
+      e.preventDefault();
+      const panel = document.getElementById('panel-form');
+      if (!panel) return;
+
+      panel.innerHTML = `
+        <div style="padding:40px; text-align:center; display:flex; flex-direction:column; gap:16px;">
+          <i data-lucide="check" style="width:32px; height:32px; color:#059669; margin:0 auto;"></i>
+          <h3 style="font-size:16px;">MESSAGE LOGGED SECURELY</h3>
+          <p style="font-size:11px; color:rgba(255,255,255,0.4)">A client coordinator has been assigned. Ticket Reference: BLZ-CS-${Math.floor(1000 + Math.random()*9000)}</p>
+          <div>
+            <a href="contact.html" class="btn-secondary" style="padding:8px 16px; font-size:10px;">SUBMIT NEW INQUIRY</a>
+          </div>
+        </div>
+      `;
+      lucide.createIcons();
+    }
+
+    function trackOrderSubmit(e) {
+      e.preventDefault();
+      const trackingId = document.getElementById('tracking-input-id').value.trim().toUpperCase();
+      const resultBox = document.getElementById('tracking-result-box');
+      if(!resultBox) return;
+
+      if (trackingId === 'BLZ-98741') {
+        resultBox.innerHTML = `
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:24px; border-radius:16px; display:flex; flex-direction:column; gap:12px; font-size:11px;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+              <span style="font-weight:700;">ID: BLZ-98741</span>
+              <span style="color:#059669; font-weight:900;">DELIVERED</span>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+              <div><p style="font-size:9px; color:rgba(255,255,255,0.4)">CARRIER</p><p style="font-weight:700;">DHL EXPRESS COURIER</p></div>
+              <div><p style="font-size:9px; color:rgba(255,255,255,0.4)">DELIVERY DATE</p><p style="font-weight:700;">2026-05-12</p></div>
+            </div>
+            <div><p style="font-size:9px; color:rgba(255,255,255,0.4)">DESTINATION ADDRESS</p><p style="font-weight:700;">12 Luxury Drive, Beverly Hills, CA</p></div>
+          </div>
+        `;
+      } else if (trackingId.startsWith('BLZ-')) {
+        resultBox.innerHTML = `
+          <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); padding:24px; border-radius:16px; display:flex; flex-direction:column; gap:12px; font-size:11px;">
+            <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+              <span style="font-weight:700;">ID: ${trackingId}</span>
+              <span style="color:var(--blaze-orange); font-weight:900;">PROCESSING</span>
+            </div>
+            <div><p style="font-size:9px; color:rgba(255,255,255,0.4)">ESTIMATED TRANSIT</p><p style="font-weight:700;">READY IN 2 DAYS</p></div>
+          </div>
+        `;
+      } else {
+        resultBox.innerHTML = `<p style="font-size:11px; color:var(--electric-red); font-weight:700;">ORDER ID NOT FOUND. (Try testing with "BLZ-98741")</p>`;
+      }
+    }
+
+    function sendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input-text');
+      const box = document.getElementById('chat-messages-box');
+      if(!input || !box || input.value.trim() === '') return;
+
+      const userVal = input.value.trim();
+      box.innerHTML += `<div class="chat-bubble user">${userVal}</div>`;
+      input.value = '';
+      box.scrollTop = box.scrollHeight;
+
+      // Simulated auto responses
+      setTimeout(() => {
+        let reply = 'I DID NOT COMPREHEND. YOU CAN ENQUIRE: "SHIPPING", "RETURNS", OR "SNEAKER LAB".';
+        const q = userVal.toLowerCase();
+
+        if (q.includes('ship') || q.includes('delivery')) {
+          reply = 'WE SHIP SECURELY WORLDWIDE FROM hubs IN DE, USA, AND JAPAN. EXPEDITED COURIER DELIVERIES ARRIVE IN 2-4 DAYS.';
+        } else if (q.includes('return') || q.includes('refund')) {
+          reply = 'BLAZE OFFERS A 30-DAY SNEAKER TRIAL PERIOD. ENJOY COMPLIMENTARY TRIAL RETURNS FOR ALL ORDERS.';
+        } else if (q.includes('lab') || q.includes('custom')) {
+          reply = 'VISIT SNEAKER-LAB.HTML IN YOUR BROWSER NAVIGATION TO CUSTOMIZE AND ORDER BESPOKE SNEAKERS.';
+        }
+
+        box.innerHTML += `<div class="chat-bubble ai">${reply}</div>`;
+        box.scrollTop = box.scrollHeight;
+        lucide.createIcons();
+      }, 700);
+    }
+  </script>
+</body>
+</html>

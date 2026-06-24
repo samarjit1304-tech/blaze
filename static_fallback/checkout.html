@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAZE | Secure Checkout</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="navbar-container"></div>
+
+  <main class="py-24" style="max-w:1440px; margin:0 auto; padding-top:120px;" id="checkout-main-box">
+    
+    <div class="section-header" style="margin:0 48px 40px;">
+      <div>
+        <p class="section-label">BLAZE TRANSACTION GATEWAY</p>
+        <h2 class="section-title">SECURE CHECKOUT</h2>
+      </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 7fr 5fr; gap:60px; margin:0 48px;" id="checkout-grid-container" class="lab-container">
+      
+      <!-- Left side: Shipping Details & payment form -->
+      <form onsubmit="handlePlaceOrder(event)" style="display:flex; flex-direction:column; gap:24px;">
+        <!-- Shipping Address -->
+        <div class="glass-panel" style="padding:32px; border-radius:20px; display:flex; flex-direction:column; gap:20px;">
+          <h3 style="font-size:14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:12px;"><i data-lucide="truck" style="color:var(--blaze-orange)"></i> 1. SHIPPING ADDRESS</h3>
+          
+          <div style="display:flex; flex-direction:column; gap:16px; font-size:11px; font-weight:700;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="color:rgba(255,255,255,0.4)">RECIPIENT NAME</label>
+              <input type="text" id="chk-name" required style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="color:rgba(255,255,255,0.4)">STREET ADDRESS</label>
+              <input type="text" id="chk-street" required style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="color:rgba(255,255,255,0.4)">CITY</label>
+                <input type="text" id="chk-city" required style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="color:rgba(255,255,255,0.4)">ZIP / POSTAL CODE</label>
+                <input type="text" id="chk-zip" required style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Method Info -->
+        <div class="glass-panel" style="padding:32px; border-radius:20px; display:flex; flex-direction:column; gap:20px;">
+          <h3 style="font-size:14px; display:flex; align-items:center; gap:8px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:12px;"><i data-lucide="credit-card" style="color:var(--blaze-orange)"></i> 2. SECURE PAYMENT</h3>
+          
+          <div style="display:flex; flex-direction:column; gap:16px; font-size:11px; font-weight:700;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="color:rgba(255,255,255,0.4)">CREDIT CARD NUMBER</label>
+              <input type="text" required placeholder="XXXX XXXX XXXX XXXX" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none;">
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="color:rgba(255,255,255,0.4)">EXPIRY DATE</label>
+                <input type="text" required placeholder="MM/YY" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none;">
+              </div>
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="color:rgba(255,255,255,0.4)">CVC CODE</label>
+                <input type="text" required placeholder="XXX" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none;">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary w-full" style="padding:16px 0; border-radius:12px;">PLACE SECURE ORDER</button>
+      </form>
+
+      <!-- Right side: Calculation summary -->
+      <div style="display:flex; flex-direction:column; gap:24px;">
+        
+        <!-- Coupon Form -->
+        <div class="glass-panel" style="padding:24px; border-radius:16px; display:flex; flex-direction:column; gap:12px;">
+          <h4 style="font-size:11px; color:var(--blaze-orange); display:flex; align-items:center; gap:6px;"><i data-lucide="gift"></i> PROMO COUPON</h4>
+          <form onsubmit="handleCouponApply(event)" style="display:flex; gap:8px;">
+            <input type="text" id="chk-coupon-input" placeholder="PROMO CODE (e.g. BLAZE20)" style="flex:1; background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:10px; border-radius:8px; font-size:10px; font-weight:700; text-transform:uppercase; outline:none;">
+            <button type="submit" class="btn-secondary" style="padding:10px 16px; font-size:9px;">APPLY</button>
+          </form>
+          <div id="chk-coupon-alert" style="font-size:9px; font-weight:700; text-transform:uppercase;"></div>
+        </div>
+
+        <!-- Inventory List & calcs board -->
+        <div class="glass-panel" style="padding:32px; border-radius:20px; display:flex; flex-direction:column; gap:24px;">
+          <h4 style="font-size:11px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:12px; letter-spacing:0.05em;">ORDER SUMS SUMMARY</h4>
+          
+          <div style="display:flex; flex-direction:column; gap:16px; max-height:220px; overflow-y:auto;" id="chk-inventory-list" class="no-scrollbar">
+            <!-- Loaded dynamically via JS -->
+          </div>
+
+          <div style="display:flex; flex-direction:column; gap:12px; font-size:11px; font-weight:600; color:rgba(255,255,255,0.5); border-top:1px solid rgba(255,255,255,0.05); padding-top:20px;" id="chk-calculations-board">
+            <!-- Dynamic price calculations injected via JS -->
+          </div>
+        </div>
+
+        <!-- Security text -->
+        <div style="display:flex; align-items:center; gap:8px; justify-content:center; font-size:9px; color:rgba(255,255,255,0.3); font-weight:700; letter-spacing:0.05em;">
+          <i data-lucide="shield-check" style="color:#059669"></i> SSL 256-BIT CRYPTO TRANSACTION SECURED
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="products-db.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    function renderPageUI() {
+      const list = document.getElementById('chk-inventory-list');
+      const board = document.getElementById('chk-calculations-board');
+      if (!list || !board) return;
+
+      if (state.cart.length === 0) {
+        document.getElementById('checkout-main-box').innerHTML = `
+          <div style="text-align:center; padding:80px 0; display:flex; flex-direction:column; align-items:center; gap:20px;">
+            <i data-lucide="shopping-bag" style="width:48px; height:48px; color:rgba(255,255,255,0.08);"></i>
+            <h3>YOUR BAG IS EMPTY</h3>
+            <a href="shop.html" class="btn-primary">SHOP ALL PRODUCTS</a>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      // Render summary items
+      list.innerHTML = state.cart.map(item => `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:16px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <img src="${item.product.images[0]}" style="width:44px; height:44px; object-fit:cover; border-radius:8px; border:1px solid rgba(255,255,255,0.05);" />
+            <div>
+              <p style="font-weight:700; color:white; font-size:12px;">${item.product.name}</p>
+              <p style="font-size:9px; color:rgba(255,255,255,0.4); margin-top:2px;">SIZE: ${item.selectedSize} | QTY: ${item.quantity}</p>
+            </div>
+          </div>
+          <span style="font-weight:700; color:white; font-size:12px;">${formatPrice(item.product.price * item.quantity)}</span>
+        </div>
+      `).join('');
+
+      // Calculations board
+      const subtotal = state.cart.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
+      const discount = Math.round((subtotal * state.discountAmount) / 100);
+      const ship = subtotal > 150 ? 0 : 15;
+      const tax = Math.round((subtotal - discount) * 0.08);
+      const total = subtotal - discount + ship + tax;
+
+      board.innerHTML = `
+        <div style="display:flex; justify-content:space-between;"><span>Subtotal</span><span style="color:white">${formatPrice(subtotal)}</span></div>
+        ${discount > 0 ? `<div style="display:flex; justify-content:space-between; color:var(--blaze-orange)"><span>Discount (${state.discountAmount}%)</span><span>-${formatPrice(discount)}</span></div>` : ''}
+        <div style="display:flex; justify-content:space-between;"><span>DHL Express Shipping</span><span style="color:white">${ship===0?'FREE':formatPrice(ship)}</span></div>
+        <div style="display:flex; justify-content:space-between;"><span>Sales Tax (8%)</span><span style="color:white">${formatPrice(tax)}</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:900; color:white; border-top:1px solid rgba(255,255,255,0.08); padding-top:12px;"><span>Total Paid Due</span><span style="color:var(--blaze-orange)">${formatPrice(total)}</span></div>
+      `;
+
+      if(state.couponCode) {
+        document.getElementById('chk-coupon-alert').innerHTML = `<span style="color:var(--blaze-orange)">ACTIVE: ${state.couponCode} (-20%)</span>`;
+      }
+    }
+
+    function handleCouponApply(e) {
+      e.preventDefault();
+      const input = document.getElementById('chk-coupon-input').value;
+      const success = applyCoupon(input);
+      const alertBox = document.getElementById('chk-coupon-alert');
+      
+      if (success) {
+        alertBox.innerHTML = `<span style="color:#059669">✓ PROMO CODE APPLIED!</span>`;
+      } else {
+        alertBox.innerHTML = `<span style="color:var(--electric-red)">✗ INVALID PROMO CODE.</span>`;
+      }
+      renderPageUI();
+    }
+
+    function handlePlaceOrder(e) {
+      e.preventDefault();
+      const name = document.getElementById('chk-name').value;
+      const street = document.getElementById('chk-street').value;
+      const city = document.getElementById('chk-city').value;
+      const zip = document.getElementById('chk-zip').value;
+
+      const addr = `${street}, ${city}, ZIP: ${zip}`;
+      const order = addOrder(addr);
+
+      if (order) {
+        document.getElementById('checkout-main-box').innerHTML = `
+          <div style="display:flex; justify-content:center; padding:0 24px;">
+            <div class="glass-panel" style="max-width:500px; width:100%; padding:40px; border-radius:24px; text-align:center; display:flex; flex-direction:column; gap:20px; border-color:rgba(255,90,31,0.2);">
+              <i data-lucide="check-circle" style="width:48px; height:48px; color:#059669; margin:0 auto;" class="animate-bounce"></i>
+              <div>
+                <p style="font-size:9px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.1em; text-transform:uppercase;">ORDER PROCESSED SECURELY</p>
+                <h3 style="font-size:20px; margin-top:4px;">THANK YOU FOR YOUR PURCHASE</h3>
+                <p style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px;">Invoice Reference: ${order.id}</p>
+              </div>
+
+              <div style="background:rgba(0,0,0,0.4); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px; text-align:left; display:flex; flex-direction:column; gap:10px; font-size:11px;">
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+                  <span style="color:rgba(255,255,255,0.4)">Recipient Name</span>
+                  <span style="font-weight:700;">${name.toUpperCase()}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:8px;">
+                  <span style="color:rgba(255,255,255,0.4)">Shipping Address</span>
+                  <span style="font-weight:700; text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-w:200px;">${addr}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:900;">
+                  <span>Total Paid</span>
+                  <span style="color:var(--blaze-orange);">${formatPrice(order.total)}</span>
+                </div>
+              </div>
+
+              <p style="font-size:11px; color:rgba(255,255,255,0.4); line-height:1.5;">A courier routing link and confirmation receipt have been dispatched to your athlete email address.</p>
+              
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px;">
+                <a href="shop.html" class="btn-secondary" style="padding:10px 0; font-size:9px;">CONTINUE</a>
+                <a href="account.html" class="btn-primary" style="padding:10px 0; font-size:9px;">DASHBOARD</a>
+              </div>
+            </div>
+          </div>
+        `;
+        lucide.createIcons();
+      }
+    }
+  </script>
+</body>
+</html>

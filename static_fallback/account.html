@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAZE | Account Dashboard</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="navbar-container"></div>
+
+  <main class="py-24" style="max-w:1440px; margin:0 auto; padding-top:120px;" id="account-main-box">
+    <!-- Rendered dynamically by JavaScript -->
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script src="products-db.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    let activeAuthTab = 'signin';
+
+    function renderPageUI() {
+      const box = document.getElementById('account-main-box');
+      if (!box) return;
+
+      if (!state.currentUser) {
+        // Render Sign In/Up Form tabs
+        box.innerHTML = `
+          <div style="display:flex; justify-content:center; padding:0 24px;">
+            <div class="glass-panel" style="max-width:450px; width:100%; padding:40px; border-radius:24px; display:flex; flex-direction:column; gap:32px;">
+              
+              <!-- Tab selector -->
+              <div style="display:flex; justify-content:center; gap:32px; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:16px;">
+                <button onclick="setAuthTab('signin')" class="auth-tab" style="background:none; border:none; color:${activeAuthTab==='signin'?'var(--blaze-orange)':'rgba(255,255,255,0.4)'}; font-size:12px; font-weight:900; letter-spacing:0.1em; cursor:pointer;">SIGN IN</button>
+                <button onclick="setAuthTab('signup')" class="auth-tab" style="background:none; border:none; color:${activeAuthTab==='signup'?'var(--blaze-orange)':'rgba(255,255,255,0.4)'}; font-size:12px; font-weight:900; letter-spacing:0.1em; cursor:pointer;">CREATE ACCOUNT</button>
+              </div>
+
+              <div id="auth-forms-inner">
+                <!-- Form fields -->
+              </div>
+            </div>
+          </div>
+        `;
+        renderAuthForm();
+      } else {
+        // Render Dashboard details
+        box.innerHTML = `
+          <div style="margin:0 48px; display:flex; flex-direction:column; gap:40px;">
+            
+            <!-- Welcome Header -->
+            <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:24px;">
+              <div>
+                <span style="font-size:9px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.2em; text-transform:uppercase;"><i data-lucide="flame" style="width:14px; height:14px; display:inline-block; vertical-align:middle; margin-right:4px;"></i> BLAZE ELITE MEMBER</span>
+                <h1 style="font-size:32px; margin-top:8px;">WELCOME, ${state.currentUser.name}</h1>
+              </div>
+              <button onclick="handleLogout()" class="btn-secondary" style="padding:10px 16px; font-size:10px; display:flex; gap:6px;"><i data-lucide="log-out" style="width:14px; height:14px;"></i> SIGN OUT</button>
+            </div>
+
+            <!-- Grid details dashboard widgets -->
+            <div style="display:grid; grid-template-columns: 5fr 7fr; gap:40px;" class="lab-container">
+              
+              <!-- Left Widget Column -->
+              <div style="display:flex; flex-direction:column; gap:24px;">
+                <!-- Reward Points -->
+                <div class="glass-panel" style="padding:32px; border-radius:20px; display:flex; flex-direction:column; gap:24px;">
+                  <h4 style="font-size:11px; color:var(--blaze-orange); display:flex; align-items:center; gap:6px;"><i data-lucide="award"></i> REWARDS PROFILE</h4>
+                  <div>
+                    <span style="font-size:9px; color:rgba(255,255,255,0.4)">TOTAL BALANCE</span>
+                    <p style="font-size:42px; font-weight:900; line-height:1; margin-top:4px;">${state.currentUser.rewardPoints} PTS</p>
+                    <p style="font-size:11px; color:#059669; font-weight:700; margin-top:8px;">Cash back credit: ${formatPrice(state.currentUser.rewardPoints * 0.1)}</p>
+                  </div>
+                  <div style="border-top:1px solid rgba(255,255,255,0.05); padding-top:20px; display:flex; flex-direction:column; gap:8px;">
+                    <span style="font-size:8px; color:rgba(255,255,255,0.4); font-weight:900; letter-spacing:0.1em;">ACTIVE MEMBER BENEFITS:</span>
+                    <p style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.8)">• FREE DHL EXPRESS GLOBAL SHIPPING</p>
+                    <p style="font-size:10px; font-weight:700; color:rgba(255,255,255,0.8)">• COMPLIMENTARY 30-DAY SNEAKER TRIAL</p>
+                  </div>
+                </div>
+
+                <!-- Referral Widget -->
+                <div class="glass-panel" style="padding:24px; border-radius:20px; display:flex; flex-direction:column; gap:12px;">
+                  <h4 style="font-size:11px; color:white; display:flex; align-items:center; gap:6px;"><i data-lucide="gift" style="color:var(--blaze-orange)"></i> REFER A FRIEND</h4>
+                  <p style="font-size:11px; color:rgba(255,255,255,0.5); line-height:1.5;">Share your athlete codes. When they order $100+, they save $20, and you score 100 bonus reward points.</p>
+                  <button onclick="copyReferLink(this)" class="btn-secondary w-full" style="padding:10px 0; font-size:10px; display:flex; gap:6px; justify-content:center;"><i data-lucide="clipboard" style="width:14px; height:14px;"></i> COPY REFERRAL LINK</button>
+                </div>
+              </div>
+
+              <!-- Right Widget Column: Orders history -->
+              <div class="glass-panel" style="padding:32px; border-radius:20px; display:flex; flex-direction:column; gap:24px;">
+                <div>
+                  <h3 style="font-size:16px; display:flex; align-items:center; gap:8px;"><i data-lucide="shopping-bag" style="color:var(--blaze-orange)"></i> ORDERS HISTORY</h3>
+                  <p style="font-size:10px; color:rgba(255,255,255,0.4); margin-top:2px;">Track your BLAZE gear receipts.</p>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:16px; max-height:400px; overflow-y:auto; padding-right:12px;" class="no-scrollbar">
+                  ${state.currentUser.orders.length === 0 ? `
+                    <p style="font-size:11px; color:rgba(255,255,255,0.4); text-align:center; padding:40px 0;">No purchase orders logged yet.</p>
+                  ` : state.currentUser.orders.map(order => `
+                    <div style="background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.05); padding:16px; border-radius:12px; font-size:11px; display:flex; flex-direction:column; gap:8px;">
+                      <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:700;">ID: ${order.id}</span>
+                        <span style="font-size:8px; font-weight:900; background:rgba(255,90,31,0.1); color:var(--blaze-orange); padding:4px 8px; border-radius:4px; letter-spacing:0.1em;">${order.status.toUpperCase()}</span>
+                      </div>
+                      <div style="display:flex; justify-content:space-between; font-size:10px; color:rgba(255,255,255,0.5);">
+                        <span>DATE: ${order.date}</span>
+                        <span style="font-weight:700; color:white;">TOTAL Paid: ${formatPrice(order.total)}</span>
+                      </div>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        `;
+      }
+
+      lucide.createIcons();
+    }
+
+    function setAuthTab(tab) {
+      activeAuthTab = tab;
+      const tabs = document.querySelectorAll('.auth-tab');
+      if (tab === 'signin') {
+        tabs[0].style.color = 'var(--blaze-orange)';
+        tabs[1].style.color = 'rgba(255,255,255,0.4)';
+      } else {
+        tabs[0].style.color = 'rgba(255,255,255,0.4)';
+        tabs[1].style.color = 'var(--blaze-orange)';
+      }
+      renderAuthForm();
+    }
+
+    function renderAuthForm() {
+      const inner = document.getElementById('auth-forms-inner');
+      if (!inner) return;
+
+      if (activeAuthTab === 'signin') {
+        inner.innerHTML = `
+          <form onsubmit="handleLoginSubmit(event)" style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:0.1em;">EMAIL ADDRESS</label>
+              <input type="email" id="auth-email" required placeholder="ATHLETE@EMAIL.COM" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:0.1em;">PASSWORD</label>
+              <input type="password" required placeholder="••••••••" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none;">
+            </div>
+            <button type="submit" class="btn-primary w-full" style="padding:14px 0; border-radius:8px; margin-top:12px;">ENTER BLAZE PORTAL</button>
+          </form>
+        `;
+      } else {
+        inner.innerHTML = `
+          <form onsubmit="handleRegisterSubmit(event)" style="display:flex; flex-direction:column; gap:16px;">
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:0.1em;">YOUR NAME</label>
+              <input type="text" id="auth-name" required placeholder="ENTER FIRST/LAST NAME" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:0.1em;">EMAIL ADDRESS</label>
+              <input type="email" id="auth-email" required placeholder="ATHLETE@EMAIL.COM" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none; text-transform:uppercase;">
+            </div>
+            <div style="display:flex; flex-direction:column; gap:6px;">
+              <label style="font-size:9px; color:rgba(255,255,255,0.4); letter-spacing:0.1em;">PASSWORD</label>
+              <input type="password" required placeholder="••••••••" style="background:#000; color:white; border:1px solid rgba(255,255,255,0.1); padding:12px; border-radius:8px; outline:none;">
+            </div>
+            <button type="submit" class="btn-primary w-full" style="padding:14px 0; border-radius:8px; margin-top:12px;">CREATE ROSTER ACCOUNT</button>
+          </form>
+        `;
+      }
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email').value;
+      if (email.trim() !== '') {
+        loginUser(email);
+        renderPageUI();
+      }
+    }
+
+    function handleRegisterSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('auth-name').value;
+      const email = document.getElementById('auth-email').value;
+      if (name.trim() !== '' && email.trim() !== '') {
+        registerUser(name, email);
+        renderPageUI();
+      }
+    }
+
+    function handleLogout() {
+      logoutUser();
+      renderPageUI();
+    }
+
+    function copyReferLink(btn) {
+      const link = `https://blaze.com/ref?code=${state.currentUser.name}-${Math.floor(1000 + Math.random()*9000)}`;
+      navigator.clipboard.writeText(link);
+      btn.innerText = '✓ LINK COPIED';
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="clipboard" style="width:14px; height:14px;"></i> COPY REFERRAL LINK`;
+        lucide.createIcons();
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAZE | Ignite Your Potential</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Lucide Icons Library CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Injected Header Navigation Shell -->
+  <div id="navbar-container"></div>
+
+  <!-- 1. CINEMATIC HERO SECTION -->
+  <section class="hero">
+    <video autoplay loop muted playsinline class="hero-video">
+      <source src="https://assets.mixkit.co/videos/preview/mixkit-running-in-the-neon-city-40034-large.mp4" type="video/mp4">
+    </video>
+    <div class="hero-gradient"></div>
+    <div class="hero-content">
+      <div class="hero-tag">
+        <i data-lucide="flame" style="width:14px; height:14px; margin-right:4px;"></i> BLAZE RACING LAB / SUMMER DROP
+      </div>
+      <h1 class="hero-headline">FUEL THE FIRE<br><span>WITHIN</span></h1>
+      <p class="hero-sub">Engineered for elite performers. Explore the new summer drops fusing record-breaking footwear tech with luxury fashion details.</p>
+      <div class="hero-btns">
+        <a href="shop.html?category=sneakers" class="btn-primary">SHOP SNEAKERS <i data-lucide="arrow-right" style="margin-left:8px; width:14px; height:14px;"></i></a>
+        <a href="shop.html?category=men" class="btn-secondary">SHOP MEN</a>
+        <a href="shop.html?category=women" class="btn-secondary">SHOP WOMEN</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. FEATURED DIVISIONS/COLLECTIONS -->
+  <section class="py-24" style="max-w:1440px; margin:0 auto;">
+    <div class="section-header">
+      <div>
+        <p class="section-label">ELITE DIVISIONS</p>
+        <h2 class="section-title">DESIGNED FOR<br>MOVEMENT.</h2>
+      </div>
+      <p class="section-desc">From carbon-plated road racing to architectural lifestyle streetwear, explore gear calibrated specifically to ignite your highest performance level.</p>
+    </div>
+
+    <div class="cat-grid">
+      <!-- Running -->
+      <a href="shop.html?subCategory=Running+Shoes" class="cat-card">
+        <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&q=80&w=800" alt="Running">
+        <div class="cat-overlay"></div>
+        <div class="cat-content">
+          <span class="cat-tag">PROPEL BEYOND LIMITS</span>
+          <h3 class="cat-title">RUNNING <i data-lucide="arrow-right"></i></h3>
+        </div>
+      </a>
+      <!-- Training -->
+      <a href="shop.html?subCategory=Compression+Wear" class="cat-card">
+        <img src="https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=800" alt="Training">
+        <div class="cat-overlay"></div>
+        <div class="cat-content">
+          <span class="cat-tag">BUILD YOUR FOUNDATION</span>
+          <h3 class="cat-title">TRAINING <i data-lucide="arrow-right"></i></h3>
+        </div>
+      </a>
+      <!-- Basketball -->
+      <a href="shop.html?subCategory=Basketball+Shoes" class="cat-card">
+        <img src="https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=800" alt="Basketball">
+        <div class="cat-overlay"></div>
+        <div class="cat-content">
+          <span class="cat-tag">COMMAND THE COURT</span>
+          <h3 class="cat-title">BASKETBALL <i data-lucide="arrow-right"></i></h3>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- 3. BEST SELLERS -->
+  <section class="py-24" style="background: #050505;">
+    <div class="section-header">
+      <div>
+        <p class="section-label">HIGH DEMAND</p>
+        <h2 class="section-title">BEST SELLERS</h2>
+      </div>
+      <a href="shop.html" class="section-desc" style="color:var(--blaze-orange); font-weight:700; text-transform:uppercase; letter-spacing:0.1em;">View catalog →</a>
+    </div>
+
+    <div class="products-grid" id="best-sellers-grid">
+      <!-- Injected via JavaScript -->
+    </div>
+  </section>
+
+  <!-- 4. SNEAKER LAB SHOWCASE BANNER -->
+  <section class="py-24" style="max-w:1440px; margin:0 auto; padding:0 48px;">
+    <div class="glass-panel" style="border-radius:32px; padding:60px; display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center; position:relative; overflow:hidden;">
+      <div style="position:absolute; right:-100px; top:-100px; width:300px; height:300px; border-radius:50%; background:var(--blaze-orange); filter:blur(100px); opacity:0.15; pointer-events:none;"></div>
+      
+      <div style="display:flex; flex-direction:column; gap:20px; z-index:2;">
+        <div style="display:flex; align-items:center; gap:8px; color:var(--blaze-orange); font-size:10px; font-weight:900; letter-spacing:0.2em; text-transform:uppercase">
+          <i data-lucide="cpu" class="animate-pulse"></i> BLAZE LABS INCEPTION
+        </div>
+        <h2 style="font-size:38px; line-height:1;">BLAZE<br><span style="background: linear-gradient(135deg, var(--blaze-orange), var(--electric-red)); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">SNEAKER LAB</span></h2>
+        <p style="font-size:12px; color:rgba(255,255,255,0.7); line-height:1.6; max-w:400px;">Step into our real-time interactive design space. Customize material properties, stitching accents, sole foam densities, and lock systems on our flagship carbon running shoe.</p>
+        <div>
+          <a href="sneaker-lab.html" class="btn-primary">LAUNCH SNEAKER LAB <i data-lucide="refresh-cw" style="margin-left:8px; width:14px; height:14px;"></i></a>
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:center; position:relative;">
+        <div style="width:300px; height:300px; border-radius:50%; border:1px solid rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; background:radial-gradient(circle, rgba(255,90,31,0.05) 0%, transparent 70%);">
+          <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=800" alt="Bespoke Sneaker" style="width:280px; transform:rotate(-15deg); filter:drop-shadow(0px 15px 30px rgba(0,0,0,0.5));">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ATHLETE TEAM SPOTLIGHT -->
+  <section class="py-24" style="background:#030303;">
+    <div class="section-header">
+      <div>
+        <p class="section-label">BLAZE TEAM</p>
+        <h2 class="section-title">ATHLETE SPOTLIGHT</h2>
+      </div>
+    </div>
+
+    <div class="ranks-table" style="max-w:1000px; margin:0 auto; padding:0 48px; border:1px solid rgba(255,255,255,0.05); background:rgba(255,255,255,0.01); border-radius:24px; overflow:hidden;">
+      <div style="display:grid; grid-template-columns: 4fr 8fr; gap:40px; padding:40px; align-items:center;">
+        <div>
+          <img src="https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&q=80&w=800" alt="Athlete Marcus" style="width:100%; border-radius:16px; border:1px solid rgba(255,255,255,0.1); filter:contrast(1.05);">
+        </div>
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <span style="font-size:10px; font-weight:900; color:var(--blaze-orange); letter-spacing:0.2em; text-transform:uppercase;">MARCUS VANE / SPRINT CHAMPION</span>
+          <blockquote style="font-family:var(--font-display); font-size:26px; font-weight:900; line-height:1.2; text-transform:uppercase;">"THE ONLY LIMIT IS THE FLAME YOU FAIL TO IGNITE."</blockquote>
+          <p style="font-size:12px; color:rgba(255,255,255,0.6); line-height:1.6;">Marcus breaks boundaries on track and field, refining speed through custom carbon propulsion. Balancing high intensity athletics with creative direction, he models the future of sprint sportswear.</p>
+          <div style="display:flex; gap:32px;">
+            <div>
+              <span style="font-size:24px; font-weight:900; color:var(--blaze-orange); font-family:var(--font-display);">9.74s</span>
+              <p style="font-size:9px; color:rgba(255,255,255,0.4); font-weight:700; margin-top:2px;">PERSONAL BEST 100M</p>
+            </div>
+            <div>
+              <span style="font-size:24px; font-weight:900; color:var(--blaze-orange); font-family:var(--font-display);">12M+</span>
+              <p style="font-size:9px; color:rgba(255,255,255,0.4); font-weight:700; margin-top:2px;">GLOBAL RUN FANS</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Injected Footer Shell -->
+  <div id="footer-container"></div>
+
+  <!-- Quick View Modal Container -->
+  <div id="quick-view-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:2000; align-items:center; justify-content:center; padding:24px;">
+    <!-- Populated dynamically via JS -->
+  </div>
+
+  <!-- Database & Shell logic -->
+  <script src="products-db.js"></script>
+  <script src="app.js"></script>
+
+  <!-- Page specific scripting -->
+  <script>
+    // Selected Quick View Item State
+    let activeQuickProduct = null;
+
+    // Render Best Sellers Grid
+    function renderPageUI() {
+      const grid = document.getElementById('best-sellers-grid');
+      if (!grid) return;
+
+      const bestSellers = window.products.filter(p => p.bestSeller).slice(0, 8);
+
+      grid.innerHTML = bestSellers.map(p => {
+        const isWL = state.wishlist.some(item => item.id === p.id);
+        return `
+          <div class="product-card">
+            <div class="product-img-box">
+              <img src="${p.images[0]}" class="primary" alt="${p.name}">
+              ${p.images[1] ? `<img src="${p.images[1]}" class="secondary" alt="${p.name}">` : ''}
+              <div class="card-actions-overlay">
+                <button class="btn-icon" onclick="triggerQuickView('${p.id}')" title="Quick View"><i data-lucide="eye"></i></button>
+                <button class="btn-icon" onclick="addToCart('${p.id}', 1, '${p.colors[0]?.value || '#000'}', '${p.sizes[0] || 'M'}')" title="Quick Add"><i data-lucide="shopping-bag"></i></button>
+              </div>
+              <div class="card-badges">
+                ${p.badge ? `<span class="badge-tag badge-orange">${p.badge}</span>` : ''}
+                ${p.sustainable ? `<span class="badge-tag badge-green">ECO-FRIENDLY</span>` : ''}
+              </div>
+              <button class="card-wishlist-btn ${isWL ? 'active' : ''}" onclick="toggleWishlist('${p.id}')"><i data-lucide="heart" style="width:14px; height:14px;"></i></button>
+            </div>
+            <div class="product-details">
+              <div>
+                <div class="rating-row">
+                  <i data-lucide="star" style="width:12px; height:12px; fill:currentColor"></i>
+                  <strong>${p.rating}</strong> <span>(${p.reviewsCount})</span>
+                </div>
+                <h3 class="card-title"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+                <p class="card-subcat">${p.subCategory}</p>
+              </div>
+              <div class="price-row">
+                <span class="card-price">${formatPrice(p.price)}</span>
+                ${p.stockCount <= 3 ? `<span class="stock-tag low">ONLY ${p.stockCount} LEFT!</span>` : `<span class="stock-tag">IN STOCK</span>`}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // Modal Actions
+    function triggerQuickView(productId) {
+      const p = window.products.find(item => item.id === productId);
+      if (!p) return;
+
+      activeQuickProduct = p;
+      const modal = document.getElementById('quick-view-overlay');
+      if (!modal) return;
+
+      modal.style.display = 'flex';
+      renderModalContent();
+    }
+
+    function renderModalContent() {
+      const p = activeQuickProduct;
+      const modal = document.getElementById('quick-view-overlay');
+      if (!p || !modal) return;
+
+      modal.innerHTML = `
+        <div class="glass-panel" style="max-width:850px; width:100%; display:grid; grid-template-columns:1fr 1fr; border-radius:24px; overflow:hidden; position:relative; max-height:85vh;">
+          <button onclick="closeQuickView()" style="position:absolute; top:20px; right:20px; background:rgba(0,0,0,0.6); border:none; color:white; padding:8px; border-radius:50px; cursor:pointer; z-index:10;"><i data-lucide="x" style="width:16px; height:16px;"></i></button>
+          
+          <div style="background:#0d0d0d; display:flex; align-items:center; justify-content:center;">
+            <img src="${p.images[0]}" style="width:100%; height:100%; object-fit:cover;" />
+          </div>
+
+          <div style="padding:40px; overflow-y:auto; display:flex; flex-direction:column; justify-content:space-between; gap:20px;">
+            <div>
+              <span style="font-size:9px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.15em; text-transform:uppercase;">${p.subCategory}</span>
+              <h3 style="font-size:24px; margin-top:4px;">${p.name}</h3>
+              <p style="font-size:20px; font-weight:900; margin-top:8px; color:var(--blaze-orange)">${formatPrice(p.price)}</p>
+              <p style="font-size:11px; color:rgba(255,255,255,0.6); line-height:1.6; margin-top:16px;">${p.description}</p>
+              
+              <!-- Color option -->
+              <div style="margin-top:20px;">
+                <span style="font-size:9px; font-weight:900; color:rgba(255,255,255,0.4); letter-spacing:0.1em; text-transform:uppercase;">SELECT ACCENT</span>
+                <div style="display:flex; gap:8px; margin-top:8px;">
+                  ${p.colors.map((c, idx) => `
+                    <button onclick="selectModalColor('${c.value}')" id="modal-color-${idx}" class="swatch-btn" style="width:24px; height:24px; border-radius:50px; background-color:${c.value}; border:2px solid ${idx===0 ? 'var(--blaze-orange)' : 'transparent'}; cursor:pointer;"></button>
+                  `).join('')}
+                </div>
+              </div>
+
+              <!-- Size options -->
+              <div style="margin-top:20px;">
+                <span style="font-size:9px; font-weight:900; color:rgba(255,255,255,0.4); letter-spacing:0.1em; text-transform:uppercase;">SELECT SIZE</span>
+                <div style="display:flex; gap:6px; flex-wrap:wrap; margin-top:8px;" id="modal-size-box">
+                  ${p.sizes.map((s, idx) => `
+                    <button onclick="selectModalSize('${s}', this)" class="size-btn" style="padding:6px 12px; background:${idx===0?'var(--blaze-orange)':'none'}; border:1px solid ${idx===0?'transparent':'rgba(255,255,255,0.1)'}; color:white; font-size:10px; font-weight:700; cursor:pointer;">${s}</button>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+
+            <button onclick="addModalItemToCart()" class="btn-primary w-full" style="padding:14px 0; border-radius:8px;">ADD TO BAG</button>
+          </div>
+        </div>
+      `;
+
+      // Set defaults on window
+      window.modalColor = p.colors[0]?.value || '';
+      window.modalSize = p.sizes[0] || '';
+
+      lucide.createIcons();
+    }
+
+    function selectModalColor(val) {
+      window.modalColor = val;
+      const swatches = document.querySelectorAll('.swatch-btn');
+      swatches.forEach(btn => {
+        btn.style.borderColor = btn.style.backgroundColor === val ? 'var(--blaze-orange)' : 'transparent';
+      });
+    }
+
+    function selectModalSize(size, el) {
+      window.modalSize = size;
+      const btns = document.querySelectorAll('.size-btn');
+      btns.forEach(btn => {
+        btn.style.background = 'none';
+        btn.style.borderColor = 'rgba(255,255,255,0.1)';
+      });
+      el.style.background = 'var(--blaze-orange)';
+      el.style.borderColor = 'transparent';
+    }
+
+    function addModalItemToCart() {
+      if(!activeQuickProduct) return;
+      addToCart(activeQuickProduct.id, 1, window.modalColor, window.modalSize);
+      closeQuickView();
+      alert(`Added ${activeQuickProduct.name} to your bag.`);
+    }
+
+    function closeQuickView() {
+      document.getElementById('quick-view-overlay').style.display = 'none';
+      activeQuickProduct = null;
+    }
+  </script>
+</body>
+</html>

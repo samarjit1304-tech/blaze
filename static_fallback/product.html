@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BLAZE | Product details</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <div id="navbar-container"></div>
+
+  <!-- Main Specs Details -->
+  <main class="py-24" style="max-w:1440px; margin:0 auto; padding-top:120px;">
+    
+    <div style="margin:0 48px 40px;">
+      <a href="shop.html" style="display:inline-flex; align-items:center; gap:8px; font-size:10px; font-weight:900; letter-spacing:0.2em; color:rgba(255,255,255,0.4); text-transform:uppercase;"><i data-lucide="arrow-left" style="width:14px; height:14px;"></i> BACK TO CATALOG</a>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 7fr 5fr; gap:60px; margin:0 48px;" id="product-details-container">
+      <!-- Loaded dynamically via JavaScript -->
+    </div>
+
+    <!-- Complete look recommended cards -->
+    <div style="margin:80px 48px 0; border-top:1px solid rgba(255,255,255,0.05); padding-top:60px;">
+      <p class="section-label">COMPLETE THE LOOK</p>
+      <h2 style="font-size:24px; margin-bottom:40px;">RECOMMENDED GEAR</h2>
+      <div class="products-grid" id="similar-products-grid" style="padding:0;">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+  </main>
+
+  <div id="footer-container"></div>
+
+  <!-- Size Guide Modal -->
+  <div id="size-guide-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); backdrop-filter:blur(8px); z-index:2000; align-items:center; justify-content:center; padding:24px;">
+    <div class="glass-panel" style="max-width:500px; width:100%; padding:40px; border-radius:24px; display:flex; flex-direction:column; gap:24px;">
+      <h3 style="font-size:18px; text-align:center;">BLAZE SIZE REFERENCE CHART</h3>
+      <div class="ranks-table">
+        <table style="width:100%">
+          <tr style="border-bottom:1px solid rgba(255,255,255,0.1)">
+            <th style="padding:8px">US</th>
+            <th style="padding:8px">UK</th>
+            <th style="padding:8px">EU</th>
+            <th style="padding:8px">CM</th>
+          </tr>
+          <tr><td style="padding:8px">7</td><td style="padding:8px">6.5</td><td style="padding:8px">40</td><td style="padding:8px">25cm</td></tr>
+          <tr><td style="padding:8px">8</td><td style="padding:8px">7.5</td><td style="padding:8px">41</td><td style="padding:8px">25.8cm</td></tr>
+          <tr><td style="padding:8px">9</td><td style="padding:8px">8.5</td><td style="padding:8px">42.5</td><td style="padding:8px">26.7cm</td></tr>
+          <tr><td style="padding:8px">10</td><td style="padding:8px">9.5</td><td style="padding:8px">44</td><td style="padding:8px">27.5cm</td></tr>
+          <tr><td style="padding:8px">11</td><td style="padding:8px">10.5</td><td style="padding:8px">45</td><td style="padding:8px">28.3cm</td></tr>
+        </table>
+      </div>
+      <button onclick="document.getElementById('size-guide-overlay').style.display='none';" class="btn-secondary w-full" style="padding:10px 0;">CLOSE REFERENCE</button>
+    </div>
+  </div>
+
+  <script src="products-db.js"></script>
+  <script src="app.js"></script>
+
+  <script>
+    let activeProduct = null;
+    let selectedColor = '';
+    let selectedSize = '';
+    let currentImageIndex = 0;
+    let is360Mode = false;
+    let rotationFrame = 0;
+
+    function renderPageUI() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      if (!id) return;
+
+      const p = window.products.find(item => item.id === id);
+      if (!p) {
+        document.getElementById('product-details-container').innerHTML = `
+          <div style="grid-column:1/-1; text-align:center; padding:80px 0;">
+            <h3>PRODUCT NOT FOUND</h3>
+            <a href="shop.html" class="btn-primary" style="margin-top:20px;">RETURN TO CATALOG</a>
+          </div>
+        `;
+        return;
+      }
+
+      activeProduct = p;
+      selectedColor = p.colors[0]?.value || '';
+      selectedSize = p.sizes[0] || '';
+
+      const container = document.getElementById('product-details-container');
+      container.innerHTML = `
+        <!-- Left: Image Viewer -->
+        <div style="display:flex; flex-direction:column; gap:20px;">
+          <div id="main-image-viewer" onmousemove="handle360Drag(event)" style="aspect-ratio:1; background:#0d0d0d; border-radius:24px; border:1px solid rgba(255,255,255,0.05); overflow:hidden; position:relative; display:flex; align-items:center; justify-content:center;">
+            <img id="detail-main-img" src="${p.images[0]}" style="width:100%; height:100%; object-fit:cover; select-none; user-select:none;" />
+            
+            <button onclick="toggle360Mode()" id="btn-360-toggle" style="position:absolute; bottom:20px; right:20px; background:rgba(0,0,0,0.6); border:1px solid rgba(255,255,255,0.1); padding:8px 16px; border-radius:30px; font-size:9px; font-weight:700; color:white; cursor:pointer;">360° VIEWER</button>
+            
+            <div class="card-badges">
+              ${p.badge ? `<span class="badge-tag badge-orange">${p.badge}</span>` : ''}
+              ${p.sustainable ? `<span class="badge-tag badge-green">SUSTAINABLE</span>` : ''}
+            </div>
+          </div>
+          
+          <!-- Thumbnails -->
+          <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:16px;" id="thumbnails-row">
+            ${p.images.map((img, idx) => `
+              <button onclick="setDetailImage(${idx})" class="thumb-btn" style="aspect-ratio:1; border-radius:12px; overflow:hidden; border:2px solid ${idx===0 ? 'var(--blaze-orange)' : 'transparent'}; background:none; cursor:pointer;">
+                <img src="${img}" style="width:100%; height:100%; object-fit:cover;" />
+              </button>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Right: Control Info -->
+        <div class="glass-panel" style="padding:40px; border-radius:32px; border:1px solid rgba(255,255,255,0.05); display:flex; flex-direction:column; gap:24px;">
+          <div>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <span style="font-size:10px; color:var(--blaze-orange); font-weight:900; letter-spacing:0.15em; text-transform:uppercase;">${p.subCategory}</span>
+              <button onclick="toggleWishlist('${p.id}'); updateWishlistIcon();" class="card-wishlist-btn" id="detail-wl-btn" style="position:static;"></button>
+            </div>
+            <h1 style="font-size:32px; margin-top:8px;">${p.name}</h1>
+            
+            <div style="display:flex; align-items:center; gap:8px; font-size:11px; color:var(--blaze-orange); margin-top:8px;">
+              <i data-lucide="star" style="width:12px; height:12px; fill:currentColor"></i>
+              <strong>${p.rating}</strong> <span style="color:rgba(255,255,255,0.4)">(${p.reviewsCount} customer reviews)</span>
+            </div>
+            
+            <p style="font-size:24px; font-weight:900; color:var(--brand-white); margin-top:16px;">${formatPrice(p.price)}</p>
+          </div>
+
+          <p style="font-size:12px; color:rgba(255,255,255,0.6); line-height:1.6;">${p.description}</p>
+
+          <!-- Swatches Color -->
+          <div>
+            <span style="font-size:9px; font-weight:900; color:rgba(255,255,255,0.4); letter-spacing:0.1em; text-transform:uppercase;">SELECT ACCENT</span>
+            <div style="display:flex; gap:8px; margin-top:8px;">
+              ${p.colors.map((c, idx) => `
+                <button onclick="setDetailColor('${c.value}')" class="detail-color-btn" style="width:28px; height:28px; border-radius:50px; background-color:${c.value}; border:2px solid ${c.value === selectedColor ? 'var(--blaze-orange)' : 'transparent'}; cursor:pointer;" title="${c.name}"></button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Sizes -->
+          <div>
+            <div style="display:flex; justify-content:space-between; font-size:9px; font-weight:900; color:rgba(255,255,255,0.4); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:8px;">
+              <span>SELECT SIZE</span>
+              <button onclick="document.getElementById('size-guide-overlay').style.display='flex'" style="background:none; border:none; color:var(--blaze-orange); font-weight:900; cursor:pointer;">SIZE GUIDE</button>
+            </div>
+            <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:8px;">
+              ${p.sizes.map(s => `
+                <button onclick="setDetailSize('${s}', this)" class="detail-size-btn" style="padding:10px 0; background:${s === selectedSize ? 'var(--blaze-orange)' : 'none'}; border:1px solid ${s === selectedSize ? 'transparent' : 'rgba(255,255,255,0.1)'}; color:white; font-size:10px; font-weight:700; cursor:pointer; border-radius:4px;">${s}</button>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Action buttons -->
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:16px;">
+            <button onclick="handleDetailAddToCart()" class="btn-secondary" style="padding:16px 0; border-radius:8px;"><i data-lucide="shopping-bag" style="width:14px; height:14px; margin-right:8px;"></i> ADD TO BAG</button>
+            <button onclick="handleDetailBuyNow()" class="btn-primary" style="padding:16px 0; border-radius:8px;">BUY NOW</button>
+          </div>
+
+          <!-- Trust Badges -->
+          <div style="display:flex; flex-direction:column; gap:12px; border-top:1px solid rgba(255,255,255,0.05); padding-top:20px; font-size:10px; color:rgba(255,255,255,0.4); font-weight:600;">
+            <div style="display:flex; align-items:center; gap:8px;"><i data-lucide="truck" style="width:14px; height:14px; color:var(--blaze-orange)"></i> FREE SPEED COURIER SHIPPING OVER $150</div>
+            <div style="display:flex; align-items:center; gap:8px;"><i data-lucide="refresh-cw" style="width:14px; height:14px; color:var(--blaze-orange)"></i> 30-DAY COMPLIMENTARY TRIAL RETURNS</div>
+          </div>
+        </div>
+      `;
+
+      updateWishlistIcon();
+      renderSimilarProducts();
+      lucide.createIcons();
+    }
+
+    function setDetailImage(idx) {
+      if (is360Mode) toggle360Mode();
+      currentImageIndex = idx;
+      document.getElementById('detail-main-img').src = activeProduct.images[idx];
+      
+      const thumbs = document.querySelectorAll('#thumbnails-row button');
+      thumbs.forEach((th, i) => {
+        th.style.borderColor = i === idx ? 'var(--blaze-orange)' : 'transparent';
+      });
+    }
+
+    function toggle360Mode() {
+      is360Mode = !is360Mode;
+      const btn = document.getElementById('btn-360-toggle');
+      const thumbs = document.getElementById('thumbnails-row');
+      
+      if (is360Mode) {
+        btn.innerText = 'EXIT 360°';
+        btn.style.background = 'var(--blaze-orange)';
+        thumbs.style.display = 'none';
+        rotationFrame = 0;
+        document.getElementById('detail-main-img').src = activeProduct.images[0];
+      } else {
+        btn.innerText = '360° VIEWER';
+        btn.style.background = 'rgba(0,0,0,0.6)';
+        thumbs.style.display = 'grid';
+        setDetailImage(currentImageIndex);
+      }
+    }
+
+    function handle360Drag(e) {
+      if (!is360Mode) return;
+      const delta = e.movementX;
+      if (delta !== 0) {
+        rotationFrame = (rotationFrame + (delta > 0 ? 1 : -1) + activeProduct.images.length) % activeProduct.images.length;
+        document.getElementById('detail-main-img').src = activeProduct.images[rotationFrame];
+      }
+    }
+
+    function setDetailColor(val) {
+      selectedColor = val;
+      const btns = document.querySelectorAll('.detail-color-btn');
+      btns.forEach(btn => {
+        btn.style.borderColor = btn.style.backgroundColor === val ? 'var(--blaze-orange)' : 'transparent';
+      });
+    }
+
+    function setDetailSize(size, el) {
+      selectedSize = size;
+      const btns = document.querySelectorAll('.detail-size-btn');
+      btns.forEach(btn => {
+        btn.style.background = 'none';
+        btn.style.borderColor = 'rgba(255,255,255,0.1)';
+      });
+      el.style.background = 'var(--blaze-orange)';
+      el.style.borderColor = 'transparent';
+    }
+
+    function updateWishlistIcon() {
+      const btn = document.getElementById('detail-wl-btn');
+      if (!btn || !activeProduct) return;
+      const wish = state.wishlist.some(item => item.id === activeProduct.id);
+      
+      if (wish) {
+        btn.classList.add('active');
+        btn.innerHTML = `<i data-lucide="heart" style="width:14px; height:14px; fill:currentColor"></i>`;
+      } else {
+        btn.classList.remove('active');
+        btn.innerHTML = `<i data-lucide="heart" style="width:14px; height:14px;"></i>`;
+      }
+      lucide.createIcons();
+    }
+
+    function handleDetailAddToCart() {
+      addToCart(activeProduct.id, quantity, selectedColor, selectedSize);
+      alert(`Added ${activeProduct.name} (${selectedSize}) to your bag.`);
+    }
+
+    function handleDetailBuyNow() {
+      addToCart(activeProduct.id, quantity, selectedColor, selectedSize);
+      window.location.href = 'checkout.html';
+    }
+
+    function renderSimilarProducts() {
+      const grid = document.getElementById('similar-products-grid');
+      if (!grid || !activeProduct) return;
+
+      const similar = window.products
+        .filter(p => p.category === activeProduct.category && p.id !== activeProduct.id)
+        .slice(0, 4);
+
+      grid.innerHTML = similar.map(p => `
+        <div class="product-card">
+          <div class="product-img-box">
+            <img src="${p.images[0]}" class="primary" alt="${p.name}">
+            <div class="card-actions-overlay">
+              <a href="product.html?id=${p.id}" class="btn-primary" style="font-size:9px; padding:10px 20px;">VIEW DETAILS</a>
+            </div>
+          </div>
+          <div class="product-details" style="padding:16px">
+            <div>
+              <h3 class="card-title" style="font-size:12px;"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+              <p class="card-subcat" style="font-size:8px; margin-bottom:8px;">${p.subCategory}</p>
+            </div>
+            <span class="card-price" style="font-size:12px;">${formatPrice(p.price)}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>
