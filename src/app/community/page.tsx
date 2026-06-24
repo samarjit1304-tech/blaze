@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Flame, Users, Trophy, Target, Instagram, Heart, Play, HelpCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useApp } from '@/context/AppContext';
 
 const CHALLENGES = [
   {
@@ -23,11 +24,11 @@ const CHALLENGES = [
   },
   {
     id: 'ch-3',
-    title: 'OCEAN CLEANUP TRAIL LOG',
-    task: 'CLEAN & TRACK 10KM OF WILD TRACES',
-    participants: 2310,
-    reward: 'Sustainable Apparel Early Access',
-    status: 'COMPLETED'
+    title: 'THE MONSOON ULTRA MARATHON',
+    task: 'LOG A 50K TOTAL DISTANCE IN 7 DAYS',
+    participants: 412,
+    reward: 'Exclusive 35% Store Coupon Code',
+    status: 'ACTIVE'
   }
 ];
 
@@ -39,27 +40,29 @@ const LEADERBOARD = [
   { rank: 5, name: 'Chen W.', miles: 74.3, points: 1480 }
 ];
 
-const SOCIAL_GALLERY = [
-  { id: 1, user: '@runner_pro', likes: 242, img: 'https://images.unsplash.com/photo-1502904582529-0a151b1b5a9f?auto=format&fit=crop&q=80&w=400' },
-  { id: 2, user: '@court_king', likes: 188, img: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=400' },
+const COMMUNITY_POSTS = [
+  { id: 1, user: '@apex_runner', likes: 254, img: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&q=80&w=400' },
+  { id: 2, user: '@clara_lift', likes: 189, img: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&q=80&w=400' },
   { id: 3, user: '@elena_run', likes: 450, img: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=400' },
   { id: 4, user: '@blaze_collector', likes: 312, img: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&q=80&w=400' }
 ];
 
 export default function Community() {
+  const { addToast } = useApp();
   const [joinedChallenge, setJoinedChallenge] = useState<string | null>(null);
   const [ambassadorEmail, setAmbassadorEmail] = useState('');
   const [ambassadorSuccess, setAmbassadorSuccess] = useState(false);
 
   const handleJoin = (id: string, title: string) => {
     setJoinedChallenge(id);
-    alert(`Successfully registered for: ${title}. Start logging your activity to qualify for the prize!`);
+    addToast(`Successfully registered for: ${title}. Start logging your activity to qualify for the prize!`, 'success', 'CHALLENGE JOINED');
   };
 
   const handleAmbassadorSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (ambassadorEmail.trim() !== '') {
       setAmbassadorSuccess(true);
+      addToast(`Thank you! Your ambassador request for ${ambassadorEmail} has been logged.`, 'success', 'APPLICATION SUBMITTED');
       setAmbassadorEmail('');
     }
   };

@@ -5,6 +5,7 @@ import { AppProvider } from "@/context/AppContext";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CustomCursor } from "@/components/layout/CustomCursor";
+import { ToastContainer } from "@/components/layout/ToastContainer";
 
 const montserrat = Montserrat({
   variable: "--font-montserrat",
@@ -37,6 +38,7 @@ export default function RootLayout({
       <body className="min-h-full bg-brand-black text-brand-white flex flex-col font-sans">
         <AppProvider>
           <CustomCursor />
+          <ToastContainer />
           <Navbar />
           <main className="flex-1 pt-20">
             {children}

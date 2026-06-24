@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Mail, MessageSquare, MapPin, Truck, HelpCircle, Send, RefreshCw, Flame } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useApp } from '@/context/AppContext';
 
 const FAQS = [
   {
@@ -31,6 +32,7 @@ const STORES = [
 ];
 
 export default function Contact() {
+  const { addToast } = useApp();
   const [activeTab, setActiveTab] = useState<'form' | 'chat' | 'tracking' | 'locator'>('form');
   
   // Tracking simulator state
@@ -52,6 +54,7 @@ export default function Contact() {
     e.preventDefault();
     if (contactForm.name && contactForm.email && contactForm.msg) {
       setFormSuccess(true);
+      addToast('Your contact request has been sent successfully.', 'success', 'MESSAGE SENT');
       setContactForm({ name: '', email: '', orderId: '', msg: '' });
     }
   };
@@ -71,6 +74,7 @@ export default function Contact() {
         address: '12 Luxury Drive, Beverly Hills, CA',
         items: 'BLAZE Pro Running Shoe X-1 Carbon'
       });
+      addToast('Order found successfully!', 'success', 'TRACKING ACTIVE');
     } else if (input.startsWith('BLZ-')) {
       setTrackingResult({
         id: input,
@@ -80,8 +84,10 @@ export default function Contact() {
         address: 'Registered Address',
         items: 'BLAZE Sportswear Roster Pack'
       });
+      addToast('Order found successfully!', 'success', 'TRACKING ACTIVE');
     } else {
       setTrackingError('ORDER ID NOT FOUND. (Try using "BLZ-98741" to test)');
+      addToast('Order ID not found. Verify your ID and try again.', 'error', 'TRACKING FAILED');
     }
   };
 
@@ -384,7 +390,7 @@ export default function Contact() {
                     <p className="text-[10px] text-brand-white/40 font-bold uppercase mt-1">OPEN DAILY: {store.hours}</p>
                   </div>
                   <button 
-                    onClick={() => alert(`Navigating details for BLAZE ${store.city}...`)}
+                    onClick={() => addToast(`Navigating map details for BLAZE ${store.city}...`, 'info', 'NAVIGATOR')}
                     className="text-[9px] font-black text-blaze-orange hover:text-brand-white tracking-widest uppercase transition-colors"
                   >
                     VIEW MAP DIRECTION →

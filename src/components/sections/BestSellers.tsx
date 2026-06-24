@@ -33,9 +33,6 @@ export const BestSellers = () => {
     const defaultColor = product.colors[0]?.value || '#000000';
     const defaultSize = product.sizes[0] || 'M';
     addToCart(product, 1, defaultColor, defaultSize);
-    
-    // Tiny alert/action visual
-    alert(`Added ${product.name} (${defaultSize}) to your bag.`);
   };
 
   const handleModalAddToCart = () => {

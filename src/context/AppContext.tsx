@@ -23,6 +23,13 @@ export interface Order {
   address: string;
 }
 
+export interface Toast {
+  id: string;
+  message: string;
+  type: 'success' | 'info' | 'error';
+  title?: string;
+}
+
 export interface User {
   id: string;
   name: string;
@@ -41,6 +48,9 @@ interface AppContextType {
   setSearchQuery: (query: string) => void;
   couponCode: string;
   discountAmount: number;
+  toasts: Toast[];
+  addToast: (message: string, type?: 'success' | 'info' | 'error', title?: string) => void;
+  removeToast: (id: string) => void;
   addToCart: (product: Product, quantity: number, color: string, size: string) => void;
   removeFromCart: (productId: string, color: string, size: string) => void;
   updateCartQuantity: (productId: string, color: string, size: string, quantity: number) => void;
@@ -74,6 +84,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [searchQuery, setSearchQuery] = useState('');
   const [couponCode, setCouponCode] = useState('');
   const [discountAmount, setDiscountAmount] = useState(0);
+  const [toasts, setToasts] = useState<Toast[]>([]);
+
+  // Toast Handlers
+  const addToast = (message: string, type: 'success' | 'info' | 'error' = 'success', title?: string) => {
+    const id = `toast-${Date.now()}-${Math.random()}`;
+    setToasts(prev => [...prev, { id, message, type, title }]);
+    setTimeout(() => {
+      removeToast(id);
+    }, 4000);
+  };
+
+  const removeToast = (id: string) => {
+    setToasts(prev => prev.filter(t => t.id !== id));
+  };
 
   // Load from local storage
   useEffect(() => {
@@ -130,12 +154,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       return [...prevCart, { product, quantity, selectedColor: color, selectedSize: size }];
     });
+    addToast(`${quantity}x ${product.name} (${size}) added to your bag.`, 'success', 'ITEM ADDED');
   };
 
   const removeFromCart = (productId: string, color: string, size: string) => {
     setCart(prevCart => prevCart.filter(
       item => !(item.product.id === productId && item.selectedColor === color && item.selectedSize === size)
     ));
+    addToast('Item removed from your bag.', 'info', 'BAG UPDATED');
   };
 
   const updateCartQuantity = (productId: string, color: string, size: string, quantity: number) => {
@@ -161,8 +187,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setWishlist(prevWishlist => {
       const exists = prevWishlist.some(item => item.id === product.id);
       if (exists) {
+        addToast(`${product.name} removed from your wishlist.`, 'info', 'WISHLIST UPDATED');
         return prevWishlist.filter(item => item.id !== product.id);
       }
+      addToast(`${product.name} added to your wishlist.`, 'success', 'WISHLIST UPDATED');
       return [...prevWishlist, product];
     });
   };
@@ -275,6 +303,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setSearchQuery,
       couponCode,
       discountAmount,
+      toasts,
+      addToast,
+      removeToast,
       addToCart,
       removeFromCart,
       updateCartQuantity,
